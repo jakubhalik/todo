@@ -663,7 +663,20 @@ export function ToDo() {
                             </div>
 
                             <div className="mt-2 text-muted-foreground">
-                                <p>{task.description}</p>
+                                {editMode[task.id] ? (
+                                    <Input
+                                        value={task.description}
+                                        onChange={(e) =>
+                                            handleEditTask(task.id, {
+                                                description: e.target.value,
+                                            })
+                                        }
+                                        className="w-full"
+                                    />
+                                ) : (
+                                    <p>{task.description}</p>
+                                )}
+
                                 <div className="flex items-center gap-2 mt-2">
                                     <CalendarIcon className="w-4 h-4" />
                                     <span>
@@ -676,16 +689,37 @@ export function ToDo() {
                                             : 'No due date'}
                                     </span>
                                 </div>
+
                                 <div className="flex items-center gap-2 mt-2">
                                     <TagIcon className="w-4 h-4" />
-                                    <div className="flex flex-wrap gap-2">
-                                        {task.tags.map((tag) => (
-                                            <Badge key={tag} variant="outline">
-                                                {tag}
-                                            </Badge>
-                                        ))}
-                                    </div>
+                                    {editMode[task.id] ? (
+                                        <Input
+                                            value={task.tags.join(', ')}
+                                            onChange={(e) =>
+                                                handleEditTask(task.id, {
+                                                    tags: e.target.value
+                                                        .split(',')
+                                                        .map((tag) =>
+                                                            tag.trim()
+                                                        ),
+                                                })
+                                            }
+                                            className="w-full"
+                                        />
+                                    ) : (
+                                        <div className="flex flex-wrap gap-2">
+                                            {task.tags.map((tag) => (
+                                                <Badge
+                                                    key={tag}
+                                                    variant="outline"
+                                                >
+                                                    {tag}
+                                                </Badge>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
+
                                 <div className="flex items-center gap-2 mt-2">
                                     <ActivityIcon className="w-4 h-4" />
                                     <div
