@@ -32,4 +32,4 @@ I want the edit icon button to have gray bg when in edit state
 
 the word high is shorter then for example words `in progress` , so when high or low is selected the `in progress` stops being in one horizontal line, but has now 2 horizontal lines where on one is in and on the other progress, I want it to keep being in one horizontal line always
 
-let's in the case of sm: make the input become a popup when focused , so it is wide enough for the user to see all that he is texting there
+let's in the case of sm: make the input become a popup when focused, so it is wide enough for the user to see all that he is texting there
