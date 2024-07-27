@@ -35,7 +35,7 @@ const CustomSelect: React.FC<{
     const [open, setOpen] = useState(false);
 
     return (
-        <div className="relative inline-block w-full">
+        <div className="relative inline-block w-full pl-3">
             <button
                 type="button"
                 className={`border rounded p-1 w-full min-w-[${value === 'ready for testing' ? '150' : '75'}px] flex justify-between items-center ${
@@ -290,8 +290,8 @@ export function ToDo() {
     };
 
     return (
-        <div className="flex h-screen w-full">
-            <div className="bg-muted w-64 border-r p-4">
+        <div className="flex flex-col md:flex-row h-screen w-full">
+            <div className="w-full pt-4 px-6 md:w-64 md:pt-6">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-lg font-bold">To-Do Lists</h2>
                     <Button
@@ -322,7 +322,7 @@ export function ToDo() {
                     ))}
                 </div>
             </div>
-            <div className="flex-1 p-6">
+            <div className="flex-1 p-6 order-last md:order-none">
                 <div className="flex items-center justify-between mb-4">
                     <h1 className="text-2xl font-bold">{currentList.name}</h1>
                     <div className="flex items-center gap-2">
