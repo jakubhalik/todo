@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { nanoid } from 'nanoid';
+import { DatePickerWithPresets } from '@/components/DatePicker';
 
 interface Task {
     id: string;
@@ -788,18 +789,36 @@ export function ToDo() {
                                     ) : (
                                         <p>{task.description}</p>
                                     )}
-
                                     <div className="flex items-center gap-2 mt-2">
                                         <CalendarIcon className="w-4 h-4" />
-                                        <span>
-                                            Due:{' '}
-                                            {task.dueDate
-                                                ? format(
-                                                      new Date(task.dueDate),
-                                                      'MMM d, yyyy'
-                                                  )
-                                                : 'No due date'}
-                                        </span>
+
+                                        {editMode[task.id] ? (
+                                            <DatePickerWithPresets
+                                                date={new Date(task.dueDate)}
+                                                onChange={(newDate) =>
+                                                    handleEditTask(task.id, {
+                                                        dueDate: newDate
+                                                            .toISOString()
+                                                            .split('T')[0],
+                                                    })
+                                                }
+                                            />
+                                        ) : (
+                                            <div className="flex items-center gap-2 mt-2">
+                                                <CalendarIcon className="w-4 h-4" />
+                                                <span>
+                                                    Due:{' '}
+                                                    {task.dueDate
+                                                        ? format(
+                                                              new Date(
+                                                                  task.dueDate
+                                                              ),
+                                                              'MMM d, yyyy'
+                                                          )
+                                                        : 'No due date'}
+                                                </span>
+                                            </div>
+                                        )}
                                     </div>
 
                                     <div className="flex items-center gap-2 mt-2">
