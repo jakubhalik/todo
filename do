@@ -13,3 +13,17 @@ f. Users can specify advanced properties for each todo item
     v. progress/for testing/finished
 
 https://v0.dev/t/fgGeHOxOSyv
+
+let's have it have Ready For Testing instead of just for testing. Make the select options prettier with use of borders and different color for different option, also put back the progress bar that was there before, I liked it. Make it be in 0% when not started is selected, at 33% when in progress just got selected and at 66% when ready for testing just got selected and 100% when finished selected, but let the person also change change the progress bars place by just clicking at it at a position without that affecting the select options, but do not let the person change the progress bar if not started or finished is selected. Also let the user edit values only when clicking the edit icon.
+
+case 'in progress':
+    if (progressPercentage < 33) {
+        progressPercentage = 33;
+    }
+    break;
+case 'ready for testing':
+    if (progressPercentage < 66) {
+        progressPercentage = 66;
+    }
+
+

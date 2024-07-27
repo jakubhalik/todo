@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -16,7 +16,8 @@ interface Task {
     priority: 'low' | 'medium' | 'high';
     dueDate: string;
     tags: string[];
-    progress: number;
+    progress: 'not started' | 'in progress' | 'ready for testing' | 'finished';
+    progressPercentage: number;
     completed: boolean;
 }
 
@@ -25,6 +26,67 @@ interface List {
     name: string;
     tasks: Task[];
 }
+
+const CustomSelect: React.FC<{
+    value: string;
+    onChange: (value: string) => void;
+    options: { value: string; label: string; color: string }[];
+}> = ({ value, onChange, options }) => {
+    const [open, setOpen] = useState(false);
+
+    return (
+        <div className="relative inline-block w-full">
+            <button
+                type="button"
+                className={`border rounded p-1 w-full flex justify-between items-center ${
+                    value === 'not started'
+                        ? 'border-gray-300'
+                        : value === 'in progress'
+                          ? 'border-orange-500 bg-orange-500'
+                          : value === 'ready for testing'
+                            ? 'border-blue-500 bg-blue-500'
+                            : 'border-green-500 bg-green-500'
+                }`}
+                onClick={() => setOpen(!open)}
+            >
+                <span>
+                    {options.find((option) => option.value === value)?.label}
+                </span>
+                <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 9l-7 7-7-7"
+                    ></path>
+                </svg>
+            </button>
+
+            {open && (
+                <ul className="absolute z-10 w-full bg-white border border-gray-300 rounded mt-1">
+                    {options.map((option) => (
+                        <li
+                            key={option.value}
+                            className={`p-2 cursor-pointer ${option.color}`}
+                            onClick={() => {
+                                onChange(option.value);
+                                setOpen(false);
+                            }}
+                        >
+                            {option.label}
+                        </li>
+                    ))}
+                </ul>
+            )}
+        </div>
+    );
+};
 
 export function ToDo() {
     const [lists, setLists] = useState<List[]>([
@@ -39,7 +101,8 @@ export function ToDo() {
                     priority: 'high',
                     dueDate: '2023-06-15',
                     tags: ['errands', 'home'],
-                    progress: 50,
+                    progress: 'in progress',
+                    progressPercentage: 33,
                     completed: false,
                 },
                 {
@@ -49,7 +112,8 @@ export function ToDo() {
                     priority: 'medium',
                     dueDate: '2023-06-30',
                     tags: ['work', 'office'],
-                    progress: 80,
+                    progress: 'finished',
+                    progressPercentage: 100,
                     completed: false,
                 },
                 {
@@ -59,7 +123,8 @@ export function ToDo() {
                     priority: 'low',
                     dueDate: '2023-06-12',
                     tags: ['personal', 'family'],
-                    progress: 0,
+                    progress: 'not started',
+                    progressPercentage: 0,
                     completed: false,
                 },
             ],
@@ -75,7 +140,8 @@ export function ToDo() {
                     priority: 'high',
                     dueDate: '2023-06-20',
                     tags: ['work', 'presentation'],
-                    progress: 30,
+                    progress: 'in progress',
+                    progressPercentage: 33,
                     completed: false,
                 },
                 {
@@ -85,7 +151,8 @@ export function ToDo() {
                     priority: 'medium',
                     dueDate: '2023-06-17',
                     tags: ['work', 'meeting'],
-                    progress: 0,
+                    progress: 'not started',
+                    progressPercentage: 0,
                     completed: false,
                 },
             ],
@@ -99,9 +166,11 @@ export function ToDo() {
         priority: 'low',
         dueDate: '',
         tags: [],
-        progress: 0,
+        progress: 'not started',
+        progressPercentage: 0,
         completed: false,
     });
+    const [editMode, setEditMode] = useState<{ [key: string]: boolean }>({});
 
     const handleAddTask = () => {
         if (newTask.title?.trim() !== '') {
@@ -116,7 +185,8 @@ export function ToDo() {
                 priority: 'low',
                 dueDate: '',
                 tags: [],
-                progress: 0,
+                progress: 'not started',
+                progressPercentage: 0,
                 completed: false,
             });
         }
@@ -129,6 +199,7 @@ export function ToDo() {
                 task.id === taskId ? updatedTask : task
             ),
         }));
+        setEditMode((prev) => ({ ...prev, [taskId]: false }));
     };
 
     const handleDeleteTask = (taskId: string) => {
@@ -147,6 +218,70 @@ export function ToDo() {
                     : task
             ),
         }));
+    };
+
+    const handleProgressChange = (
+        taskId: string,
+        progress: Task['progress']
+    ) => {
+        setCurrentList((prevList) => ({
+            ...prevList,
+            tasks: prevList.tasks.map((task) => {
+                if (task.id === taskId) {
+                    let progressPercentage = task.progressPercentage;
+                    switch (progress) {
+                        case 'not started':
+                            progressPercentage = 0;
+                            break;
+                        case 'in progress':
+                            if (progressPercentage < 33) {
+                                progressPercentage = 33;
+                            }
+                            break;
+                        case 'ready for testing':
+                            if (progressPercentage < 66) {
+                                progressPercentage = 66;
+                            }
+                            break;
+                        case 'finished':
+                            progressPercentage = 100;
+                            break;
+                    }
+                    return { ...task, progress, progressPercentage };
+                }
+                return task;
+            }),
+        }));
+    };
+
+    const handleProgressBarClick = (
+        taskId: string,
+        e: React.MouseEvent<HTMLDivElement, MouseEvent>
+    ) => {
+        const bar = e.currentTarget;
+        const rect = bar.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const newProgressPercentage = Math.floor((clickX / rect.width) * 100);
+        setCurrentList((prevList) => ({
+            ...prevList,
+            tasks: prevList.tasks.map((task) => {
+                if (
+                    task.id === taskId &&
+                    task.progress !== 'not started' &&
+                    task.progress !== 'finished'
+                ) {
+                    return {
+                        ...task,
+                        progressPercentage: newProgressPercentage,
+                    };
+                }
+                return task;
+            }),
+        }));
+    };
+
+    const handleEditIconClick = (taskId: string) => {
+        setEditMode((prev) => ({ ...prev, [taskId]: !prev[taskId] }));
     };
 
     return (
@@ -215,11 +350,23 @@ export function ToDo() {
                                             handleToggleTaskCompletion(task.id)
                                         }
                                     />
-                                    <h3
-                                        className={`font-medium ${task.completed ? 'line-through text-muted-foreground' : ''}`}
-                                    >
-                                        {task.title}
-                                    </h3>
+                                    {editMode[task.id] ? (
+                                        <Input
+                                            value={task.title}
+                                            onChange={(e) =>
+                                                handleEditTask(task.id, {
+                                                    ...task,
+                                                    title: e.target.value,
+                                                })
+                                            }
+                                        />
+                                    ) : (
+                                        <h3
+                                            className={`font-medium ${task.completed ? 'line-through text-muted-foreground' : ''}`}
+                                        >
+                                            {task.title}
+                                        </h3>
+                                    )}
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Badge
@@ -227,17 +374,52 @@ export function ToDo() {
                                             task.priority === 'high'
                                                 ? 'destructive'
                                                 : task.priority === 'medium'
-                                                    ? 'secondary'
-                                                    : 'default'
+                                                  ? 'secondary'
+                                                  : 'default'
                                         }
                                     >
                                         {task.priority}
                                     </Badge>
+                                    {editMode[task.id] ? (
+                                        <CustomSelect
+                                            value={task.progress}
+                                            onChange={(value) =>
+                                                handleProgressChange(
+                                                    task.id,
+                                                    value as Task['progress']
+                                                )
+                                            }
+                                            options={[
+                                                {
+                                                    value: 'not started',
+                                                    label: 'Not Started',
+                                                    color: 'bg-white text-black',
+                                                },
+                                                {
+                                                    value: 'in progress',
+                                                    label: 'In Progress',
+                                                    color: 'bg-orange-500 text-white',
+                                                },
+                                                {
+                                                    value: 'ready for testing',
+                                                    label: 'Ready For Testing',
+                                                    color: 'bg-blue-500 text-white',
+                                                },
+                                                {
+                                                    value: 'finished',
+                                                    label: 'Finished',
+                                                    color: 'bg-green-500 text-white',
+                                                },
+                                            ]}
+                                        />
+                                    ) : (
+                                        <span>{task.progress}</span>
+                                    )}
                                     <Button
                                         variant="ghost"
                                         size="icon"
                                         onClick={() =>
-                                            handleEditTask(task.id, task)
+                                            handleEditIconClick(task.id)
                                         }
                                     >
                                         <FilePenIcon className="w-4 h-4" />
@@ -282,15 +464,39 @@ export function ToDo() {
                                 </div>
                                 <div className="flex items-center gap-2 mt-2">
                                     <ActivityIcon className="w-4 h-4" />
-                                    <div className="w-full bg-muted rounded-full h-2">
+                                    <div
+                                        className={`w-full bg-muted rounded-full h-2 ${
+                                            editMode[task.id] &&
+                                            task.progress !== 'not started' &&
+                                            task.progress !== 'finished'
+                                                ? 'cursor-pointer'
+                                                : ''
+                                        }`}
+                                        onClick={(e) =>
+                                            editMode[task.id] &&
+                                            task.progress !== 'not started' &&
+                                            task.progress !== 'finished'
+                                                ? handleProgressBarClick(
+                                                      task.id,
+                                                      e
+                                                  )
+                                                : null
+                                        }
+                                    >
                                         <div
-                                            className="bg-primary rounded-full h-2"
+                                            className={`bg-primary rounded-full h-2 ${
+                                                task.progress ===
+                                                    'not started' ||
+                                                task.progress === 'finished'
+                                                    ? 'pointer-events-none'
+                                                    : 'pointer-events-auto'
+                                            }`}
                                             style={{
-                                                width: `${task.progress}%`,
+                                                width: `${task.progressPercentage}%`,
                                             }}
                                         />
                                     </div>
-                                    <span>{task.progress}%</span>
+                                    <span>{task.progressPercentage}%</span>
                                 </div>
                             </div>
                         </Card>
