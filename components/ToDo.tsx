@@ -38,14 +38,20 @@ const CustomSelect: React.FC<{
         <div className="relative inline-block w-full">
             <button
                 type="button"
-                className={`border rounded p-1 w-full flex justify-between items-center ${
+                className={`border rounded p-1 w-full min-w-[${value === 'ready for testing' ? '150' : '75'}px] flex justify-between items-center ${
                     value === 'not started'
                         ? 'border-gray-300'
                         : value === 'in progress'
-                          ? 'border-orange-300 bg-orange-300'
+                          ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
                           : value === 'ready for testing'
-                            ? 'border-blue-300 bg-blue-300'
-                            : 'border-green-300 bg-green-300'
+                            ? 'border-blue-300 bg-blue-300 dark:border-blue-600 dark:bg-blue-600'
+                            : value === 'high'
+                              ? 'border-destructive bg-destructive'
+                              : value === 'medium'
+                                ? 'border-primary bg-primary text-white dark:text-black'
+                                : value === 'low'
+                                  ? 'border-secondary bg-secondary'
+                                  : 'border-green-300 bg-green-300 dark:border-green-600 dark:bg-green-600'
                 }`}
                 onClick={() => setOpen(!open)}
             >
@@ -118,8 +124,8 @@ export function ToDo() {
                 },
                 {
                     id: 'task3',
-                    title: 'Call mom',
-                    description: 'Remember to call mom this weekend',
+                    title: 'Call girlfriend',
+                    description: 'Remember to call your GF this weekend',
                     priority: 'low',
                     dueDate: '2023-06-12',
                     tags: ['personal', 'family'],
@@ -346,9 +352,12 @@ export function ToDo() {
                                     <Checkbox
                                         checked={task.completed}
                                         onCheckedChange={() =>
+                                            editMode[task.id] &&
                                             handleToggleTaskCompletion(task.id)
                                         }
+                                        disabled={!editMode[task.id]}
                                     />
+
                                     {editMode[task.id] ? (
                                         <Input
                                             value={task.title}
@@ -367,17 +376,46 @@ export function ToDo() {
                                     )}
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Badge
-                                        variant={
-                                            task.priority === 'high'
-                                                ? 'destructive'
-                                                : task.priority === 'medium'
-                                                  ? 'secondary'
-                                                  : 'default'
-                                        }
-                                    >
-                                        {task.priority}
-                                    </Badge>
+                                    {editMode[task.id] ? (
+                                        <CustomSelect
+                                            value={task.priority}
+                                            onChange={(value) =>
+                                                handleEditTask(task.id, {
+                                                    priority:
+                                                        value as Task['priority'],
+                                                })
+                                            }
+                                            options={[
+                                                {
+                                                    value: 'low',
+                                                    label: 'Low',
+                                                    color: 'bg-secondary dark:bg-black',
+                                                },
+                                                {
+                                                    value: 'medium',
+                                                    label: 'Medium',
+                                                    color: 'bg-primary text-white dark:text-black',
+                                                },
+                                                {
+                                                    value: 'high',
+                                                    label: 'High',
+                                                    color: 'bg-destructive',
+                                                },
+                                            ]}
+                                        />
+                                    ) : (
+                                        <Badge
+                                            variant={
+                                                task.priority === 'high'
+                                                    ? 'destructive'
+                                                    : task.priority === 'medium'
+                                                      ? 'default'
+                                                      : 'secondary'
+                                            }
+                                        >
+                                            {task.priority}
+                                        </Badge>
+                                    )}
                                     {editMode[task.id] ? (
                                         <CustomSelect
                                             value={task.progress}
@@ -391,37 +429,37 @@ export function ToDo() {
                                                 {
                                                     value: 'not started',
                                                     label: 'Not Started',
-                                                    color: 'bg-white',
+                                                    color: 'bg-white dark:bg-slate-900',
                                                 },
                                                 {
                                                     value: 'in progress',
                                                     label: 'In Progress',
-                                                    color: 'bg-orange-300',
+                                                    color: 'bg-orange-300 dark:bg-yellow-300 dark:text-black',
                                                 },
                                                 {
                                                     value: 'ready for testing',
                                                     label: 'Ready For Testing',
-                                                    color: 'bg-blue-300',
+                                                    color: 'bg-blue-300 dark:bg-blue-600',
                                                 },
                                                 {
                                                     value: 'finished',
                                                     label: 'Finished',
-                                                    color: 'bg-green-300',
+                                                    color: 'bg-green-300 dark:bg-green-600',
                                                 },
                                             ]}
                                         />
                                     ) : (
                                         <span
-                                            className={`text-xs rounded p-1 ${
+                                            className={`text-xs rounded p-1 dark:font-semibold ${
                                                 task.progress === 'not started'
                                                     ? 'border-gray-300'
                                                     : task.progress ===
                                                         'in progress'
-                                                      ? 'border-orange-300 bg-orange-300'
+                                                      ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
                                                       : task.progress ===
                                                           'ready for testing'
-                                                        ? 'border-blue-300 bg-blue-300'
-                                                        : 'border-green-300 bg-green-300'
+                                                        ? 'border-blue-300 bg-blue-300 dark:border-blue-600 dark:bg-blue-600'
+                                                        : 'border-green-300 bg-green-300 dark:border-green-600 dark:bg-green-600'
                                             }`}
                                         >
                                             {task.progress}
@@ -432,7 +470,7 @@ export function ToDo() {
                                         size="icon"
                                         className={
                                             editMode[task.id]
-                                                ? 'bg-gray-200 p-2'
+                                                ? 'bg-gray-200 dark:bg-gray-900 p-2'
                                                 : ''
                                         }
                                         onClick={() =>
@@ -463,10 +501,13 @@ export function ToDo() {
                                 <div className="flex items-center gap-2 mt-2">
                                     <CalendarIcon className="w-4 h-4" />
                                     <span>
-                                        {format(
-                                            new Date(task.dueDate),
-                                            'MMM d, yyyy'
-                                        )}
+                                        Due:{' '}
+                                        {task.dueDate
+                                            ? format(
+                                                  new Date(task.dueDate),
+                                                  'MMM d, yyyy'
+                                              )
+                                            : 'No due date'}
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2 mt-2">

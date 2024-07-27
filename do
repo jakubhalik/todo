@@ -29,3 +29,5 @@ case 'ready for testing':
 I do not want just the leaving the textfield or clicking enter when in it to leave the edit state, I want that to happen ONLY when clicking on the edit icon again
 
 I want the edit icon button to have gray bg when in edit state
+
+the word high is shorter then for example words `in progress` , so when high or low is selected the `in progress` stops being in one horizontal line, but has now 2 horizontal lines where on one is in and on the other progress, I want it to keep being in one horizontal line always
