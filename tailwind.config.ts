@@ -2,6 +2,7 @@ import type { Config } from 'tailwindcss';
 
 const config = {
     darkMode: ['class'],
+    safelist: ['min-w-[150px]', 'min-w-[75px]'],
     content: [
         './pages/**/*.{ts,tsx}',
         './components/**/*.{ts,tsx}',
