@@ -42,14 +42,14 @@ const CustomSelect: React.FC<{
                     value === 'not started'
                         ? 'border-gray-300'
                         : value === 'in progress'
-                          ? 'border-orange-500 bg-orange-500'
+                          ? 'border-orange-300 bg-orange-300'
                           : value === 'ready for testing'
-                            ? 'border-blue-500 bg-blue-500'
-                            : 'border-green-500 bg-green-500'
+                            ? 'border-blue-300 bg-blue-300'
+                            : 'border-green-300 bg-green-300'
                 }`}
                 onClick={() => setOpen(!open)}
             >
-                <span>
+                <span className="text-xs">
                     {options.find((option) => option.value === value)?.label}
                 </span>
                 <svg
@@ -73,7 +73,7 @@ const CustomSelect: React.FC<{
                     {options.map((option) => (
                         <li
                             key={option.value}
-                            className={`p-2 cursor-pointer ${option.color}`}
+                            className={`p-1 cursor-pointer text-xs ${option.color}`}
                             onClick={() => {
                                 onChange(option.value);
                                 setOpen(false);
@@ -192,14 +192,13 @@ export function ToDo() {
         }
     };
 
-    const handleEditTask = (taskId: string, updatedTask: Task) => {
+    const handleEditTask = (taskId: string, updatedTask: Partial<Task>) => {
         setCurrentList((prevList) => ({
             ...prevList,
             tasks: prevList.tasks.map((task) =>
-                task.id === taskId ? updatedTask : task
+                task.id === taskId ? { ...task, ...updatedTask } : task
             ),
         }));
-        setEditMode((prev) => ({ ...prev, [taskId]: false }));
     };
 
     const handleDeleteTask = (taskId: string) => {
@@ -355,7 +354,6 @@ export function ToDo() {
                                             value={task.title}
                                             onChange={(e) =>
                                                 handleEditTask(task.id, {
-                                                    ...task,
                                                     title: e.target.value,
                                                 })
                                             }
@@ -393,31 +391,50 @@ export function ToDo() {
                                                 {
                                                     value: 'not started',
                                                     label: 'Not Started',
-                                                    color: 'bg-white text-black',
+                                                    color: 'bg-white',
                                                 },
                                                 {
                                                     value: 'in progress',
                                                     label: 'In Progress',
-                                                    color: 'bg-orange-500 text-white',
+                                                    color: 'bg-orange-300',
                                                 },
                                                 {
                                                     value: 'ready for testing',
                                                     label: 'Ready For Testing',
-                                                    color: 'bg-blue-500 text-white',
+                                                    color: 'bg-blue-300',
                                                 },
                                                 {
                                                     value: 'finished',
                                                     label: 'Finished',
-                                                    color: 'bg-green-500 text-white',
+                                                    color: 'bg-green-300',
                                                 },
                                             ]}
                                         />
                                     ) : (
-                                        <span>{task.progress}</span>
+                                        <span
+                                            className={`text-xs rounded p-1 ${
+                                                task.progress === 'not started'
+                                                    ? 'border-gray-300'
+                                                    : task.progress ===
+                                                        'in progress'
+                                                      ? 'border-orange-300 bg-orange-300'
+                                                      : task.progress ===
+                                                          'ready for testing'
+                                                        ? 'border-blue-300 bg-blue-300'
+                                                        : 'border-green-300 bg-green-300'
+                                            }`}
+                                        >
+                                            {task.progress}
+                                        </span>
                                     )}
                                     <Button
                                         variant="ghost"
                                         size="icon"
+                                        className={
+                                            editMode[task.id]
+                                                ? 'bg-gray-200 p-2'
+                                                : ''
+                                        }
                                         onClick={() =>
                                             handleEditIconClick(task.id)
                                         }

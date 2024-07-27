@@ -26,4 +26,6 @@ case 'ready for testing':
         progressPercentage = 66;
     }
 
+I do not want just the leaving the textfield or clicking enter when in it to leave the edit state, I want that to happen ONLY when clicking on the edit icon again
 
+I want the edit icon button to have gray bg when in edit state
