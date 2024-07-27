@@ -37,3 +37,7 @@ let's in the case of sm: make the input become a popup when focused, so it is wi
 Let's make the description and tags editable when in edit state
 
 make the popup show up for inputs only when width is smaller than 400px
+
+let's at first actually not display any lists, but lets give the user a button to generate template tasks, which will add the tasks that are right now in the setList
+
+also make it so when the user generates lists the first list does get selected

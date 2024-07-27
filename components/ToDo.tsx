@@ -38,7 +38,9 @@ const CustomSelect: React.FC<{
         <div className="relative inline-block w-full pl-3">
             <button
                 type="button"
-                className={`border border-rounded rounded p-1 w-full min-w-[${value === 'ready for testing' ? '150' : '75'}px] flex justify-between items-center ${
+                className={`border border-rounded rounded p-1 w-full min-w-[${
+                    value === 'ready for testing' ? '150' : '75'
+                }px] flex justify-between items-center ${
                     value === 'not started'
                         ? 'border-gray-300'
                         : value === 'in progress'
@@ -95,77 +97,84 @@ const CustomSelect: React.FC<{
 };
 
 export function ToDo() {
-    const [lists, setLists] = useState<List[]>([
-        {
-            id: 'list1',
-            name: 'Personal',
-            tasks: [
-                {
-                    id: 'task1',
-                    title: 'Grocery shopping',
-                    description: 'Buy milk, eggs, and bread',
-                    priority: 'high',
-                    dueDate: '2023-06-15',
-                    tags: ['errands', 'home'],
-                    progress: 'in progress',
-                    progressPercentage: 33,
-                    completed: false,
-                },
-                {
-                    id: 'task2',
-                    title: 'Finish report',
-                    description: 'Complete the quarterly report for work',
-                    priority: 'medium',
-                    dueDate: '2023-06-30',
-                    tags: ['work', 'office'],
-                    progress: 'finished',
-                    progressPercentage: 100,
-                    completed: false,
-                },
-                {
-                    id: 'task3',
-                    title: 'Call girlfriend',
-                    description: 'Remember to call your GF this weekend',
-                    priority: 'low',
-                    dueDate: '2023-06-12',
-                    tags: ['personal', 'family'],
-                    progress: 'not started',
-                    progressPercentage: 0,
-                    completed: false,
-                },
-            ],
-        },
-        {
-            id: 'list2',
-            name: 'Work',
-            tasks: [
-                {
-                    id: 'task4',
-                    title: 'Prepare presentation',
-                    description: 'Create slides for the client meeting',
-                    priority: 'high',
-                    dueDate: '2023-06-20',
-                    tags: ['work', 'presentation'],
-                    progress: 'in progress',
-                    progressPercentage: 33,
-                    completed: false,
-                },
-                {
-                    id: 'task5',
-                    title: 'Attend team meeting',
-                    description: 'Join the weekly team meeting',
-                    priority: 'medium',
-                    dueDate: '2023-06-17',
-                    tags: ['work', 'meeting'],
-                    progress: 'not started',
-                    progressPercentage: 0,
-                    completed: false,
-                },
-            ],
-        },
-    ]);
+    const [lists, setLists] = useState<List[]>([]);
 
-    const [currentList, setCurrentList] = useState<List>(lists[0]);
+    const handleGenerateTemplateLists = () => {
+        const newLists = [
+            {
+                id: 'list1',
+                name: 'Personal',
+                tasks: [
+                    {
+                        id: 'task1',
+                        title: 'Grocery shopping',
+                        description: 'Buy milk, eggs, and bread',
+                        priority: 'high',
+                        dueDate: '2023-06-15',
+                        tags: ['errands', 'home'],
+                        progress: 'in progress',
+                        progressPercentage: 33,
+                        completed: false,
+                    },
+                    {
+                        id: 'task2',
+                        title: 'Finish report',
+                        description: 'Complete the quarterly report for work',
+                        priority: 'medium',
+                        dueDate: '2023-06-30',
+                        tags: ['work', 'office'],
+                        progress: 'finished',
+                        progressPercentage: 100,
+                        completed: false,
+                    },
+                    {
+                        id: 'task3',
+                        title: 'Call girlfriend',
+                        description: 'Remember to call your GF this weekend',
+                        priority: 'low',
+                        dueDate: '2023-06-12',
+                        tags: ['personal', 'family'],
+                        progress: 'not started',
+                        progressPercentage: 0,
+                        completed: false,
+                    },
+                ],
+            },
+            {
+                id: 'list2',
+                name: 'Work',
+                tasks: [
+                    {
+                        id: 'task4',
+                        title: 'Prepare presentation',
+                        description: 'Create slides for the client meeting',
+                        priority: 'high',
+                        dueDate: '2023-06-20',
+                        tags: ['work', 'presentation'],
+                        progress: 'in progress',
+                        progressPercentage: 33,
+                        completed: false,
+                    },
+                    {
+                        id: 'task5',
+                        title: 'Attend team meeting',
+                        description: 'Join the weekly team meeting',
+                        priority: 'medium',
+                        dueDate: '2023-06-17',
+                        tags: ['work', 'meeting'],
+                        progress: 'not started',
+                        progressPercentage: 0,
+                        completed: false,
+                    },
+                ],
+            },
+        ];
+        setLists(newLists);
+        setCurrentList(newLists[0]);
+    };
+
+    const [currentList, setCurrentList] = useState<List | null>(null);
+
     const [newTask, setNewTask] = useState<Partial<Task>>({
         title: '',
         description: '',
@@ -176,11 +185,15 @@ export function ToDo() {
         progressPercentage: 0,
         completed: false,
     });
+
     const [editMode, setEditMode] = useState<{ [key: string]: boolean }>({});
 
     const handleAddTask = () => {
         if (newTask.title?.trim() !== '') {
-            const newTaskWithId: Task = { ...newTask, id: nanoid() } as Task;
+            const newTaskWithId: Task = {
+                ...newTask,
+                id: nanoid(),
+            } as Task;
             setCurrentList((prevList) => ({
                 ...prevList,
                 tasks: [...prevList.tasks, newTaskWithId],
@@ -299,7 +312,11 @@ export function ToDo() {
                         onClick={() =>
                             setLists([
                                 ...lists,
-                                { id: nanoid(), name: 'New List', tasks: [] },
+                                {
+                                    id: nanoid(),
+                                    name: 'New List',
+                                    tasks: [],
+                                },
                             ])
                         }
                     >
@@ -307,458 +324,489 @@ export function ToDo() {
                         Add List
                     </Button>
                 </div>
-                <div className="space-y-2">
-                    {lists.map((list) => (
-                        <Button
-                            key={list.id}
-                            variant={
-                                list.id === currentList.id ? 'default' : 'ghost'
-                            }
-                            className="w-full justify-start"
-                            onClick={() => setCurrentList(list)}
-                        >
-                            {list.name}
-                        </Button>
-                    ))}
-                </div>
+
+                {lists.length === 0 ? (
+                    <Button onClick={handleGenerateTemplateLists}>
+                        Generate Template Lists
+                    </Button>
+                ) : (
+                    <div className="space-y-2">
+                        {lists.map((list) => (
+                            <Button
+                                key={list.id}
+                                variant={
+                                    list.id === currentList?.id &&
+                                    currentList.id
+                                        ? 'default'
+                                        : 'ghost'
+                                }
+                                className="w-full justify-start"
+                                onClick={() => setCurrentList(list)}
+                            >
+                                {list.name}
+                            </Button>
+                        ))}
+                    </div>
+                )}
             </div>
             <div className="flex-1 p-6 order-last lg:order-none">
                 <div className="flex items-center justify-between mb-4">
                     <h1 className="text-xl sm:text-2xl font-bold pr-2">
-                        {currentList.name}
+                        {currentList && currentList.name}
                     </h1>
-                    <div className="flex items-center gap-2">
-                        <Input
-                            type="text"
-                            placeholder="New task"
-                            value={newTask.title || ''}
-                            onChange={(e) =>
-                                setNewTask({
-                                    ...newTask,
-                                    title: e.target.value,
-                                })
-                            }
-                            className="bg-muted/50 border-none focus:ring-0"
-                        />
-                        <Button onClick={handleAddTask}>
-                            <PlusIcon className="w-4 h-4 mr-2" />
-                            Add Task
-                        </Button>
-                    </div>
+                    {currentList && (
+                        <div className="flex items-center gap-2">
+                            <Input
+                                type="text"
+                                placeholder="New task"
+                                value={newTask.title || ''}
+                                onChange={(e) =>
+                                    setNewTask({
+                                        ...newTask,
+                                        title: e.target.value,
+                                    })
+                                }
+                                className="bg-muted/50 border-none focus:ring-0"
+                            />
+                            <Button onClick={handleAddTask}>
+                                <PlusIcon className="w-4 h-4 mr-2" />
+                                Add Task
+                            </Button>
+                        </div>
+                    )}
                 </div>
                 <div className="grid gap-4">
-                    {currentList.tasks.map((task) => (
-                        <Card key={task.id} className="p-4">
-                            <div className="md:flex items-center justify-between hidden">
-                                <div className="flex items-center gap-2">
-                                    <Checkbox
-                                        checked={task.completed}
-                                        onCheckedChange={() =>
-                                            editMode[task.id] &&
-                                            handleToggleTaskCompletion(task.id)
-                                        }
-                                        disabled={!editMode[task.id]}
-                                    />
-
-                                    {editMode[task.id] ? (
-                                        <div className="relative">
-                                            <Input
-                                                value={task.title}
-                                                onChange={(e) =>
-                                                    handleEditTask(task.id, {
-                                                        title: e.target.value,
-                                                    })
-                                                }
-                                                className="w-full sm:w-auto"
-                                            />
-                                        </div>
-                                    ) : (
-                                        <h3
-                                            className={`font-medium ${task.completed ? 'line-through text-muted-foreground' : ''}`}
-                                        >
-                                            {task.title}
-                                        </h3>
-                                    )}
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    {editMode[task.id] ? (
-                                        <CustomSelect
-                                            value={task.priority}
-                                            onChange={(value) =>
-                                                handleEditTask(task.id, {
-                                                    priority:
-                                                        value as Task['priority'],
-                                                })
-                                            }
-                                            options={[
-                                                {
-                                                    value: 'low',
-                                                    label: 'Low',
-                                                    color: 'bg-secondary dark:bg-black',
-                                                },
-                                                {
-                                                    value: 'medium',
-                                                    label: 'Medium',
-                                                    color: 'bg-primary text-white dark:text-black',
-                                                },
-                                                {
-                                                    value: 'high',
-                                                    label: 'High',
-                                                    color: 'bg-destructive',
-                                                },
-                                            ]}
-                                        />
-                                    ) : (
-                                        <Badge
-                                            variant={
-                                                task.priority === 'high'
-                                                    ? 'destructive'
-                                                    : task.priority === 'medium'
-                                                      ? 'default'
-                                                      : 'secondary'
-                                            }
-                                        >
-                                            {task.priority}
-                                        </Badge>
-                                    )}
-                                    {editMode[task.id] ? (
-                                        <CustomSelect
-                                            value={task.progress}
-                                            onChange={(value) =>
-                                                handleProgressChange(
-                                                    task.id,
-                                                    value as Task['progress']
+                    {currentList &&
+                        currentList.tasks.map((task) => (
+                            <Card key={task.id} className="p-4">
+                                <div className="md:flex items-center justify-between hidden">
+                                    <div className="flex items-center gap-2">
+                                        <Checkbox
+                                            checked={task.completed}
+                                            onCheckedChange={() =>
+                                                editMode[task.id] &&
+                                                handleToggleTaskCompletion(
+                                                    task.id
                                                 )
                                             }
-                                            options={[
-                                                {
-                                                    value: 'not started',
-                                                    label: 'Not Started',
-                                                    color: 'bg-white dark:bg-slate-900',
-                                                },
-                                                {
-                                                    value: 'in progress',
-                                                    label: 'In Progress',
-                                                    color: 'bg-orange-300 dark:bg-yellow-300 dark:text-black',
-                                                },
-                                                {
-                                                    value: 'ready for testing',
-                                                    label: 'Ready For Testing',
-                                                    color: 'bg-blue-300 dark:bg-blue-600',
-                                                },
-                                                {
-                                                    value: 'finished',
-                                                    label: 'Finished',
-                                                    color: 'bg-green-300 dark:bg-green-600',
-                                                },
-                                            ]}
+                                            disabled={!editMode[task.id]}
                                         />
-                                    ) : (
-                                        <span
-                                            className={`text-xs rounded p-1 dark:font-semibold ${
-                                                task.progress === 'not started'
-                                                    ? 'border-gray-300'
-                                                    : task.progress ===
-                                                        'in progress'
-                                                      ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
-                                                      : task.progress ===
-                                                          'ready for testing'
-                                                        ? 'border-blue-300 bg-blue-300 dark:border-blue-600 dark:bg-blue-600'
-                                                        : 'border-green-300 bg-green-300 dark:border-green-600 dark:bg-green-600'
-                                            }`}
-                                        >
-                                            {task.progress}
-                                        </span>
-                                    )}
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className={
-                                            editMode[task.id]
-                                                ? 'bg-gray-200 dark:bg-gray-900 p-2'
-                                                : ''
-                                        }
-                                        onClick={() =>
-                                            handleEditIconClick(task.id)
-                                        }
-                                    >
-                                        <FilePenIcon className="w-4 h-4" />
-                                        <span className="sr-only">
-                                            Edit task
-                                        </span>
-                                    </Button>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() =>
-                                            handleDeleteTask(task.id)
-                                        }
-                                    >
-                                        <TrashIcon className="w-4 h-4" />
-                                        <span className="sr-only">
-                                            Delete task
-                                        </span>
-                                    </Button>
-                                </div>
-                            </div>
 
-                            <div className="md:hidden flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <Checkbox
-                                        checked={task.completed}
-                                        onCheckedChange={() =>
-                                            editMode[task.id] &&
-                                            handleToggleTaskCompletion(task.id)
-                                        }
-                                        disabled={!editMode[task.id]}
-                                    />
-
-                                    {editMode[task.id] ? (
-                                        <div className="relative">
-                                            <Input
-                                                value={task.title}
-                                                onChange={(e) =>
+                                        {editMode[task.id] ? (
+                                            <div className="relative">
+                                                <Input
+                                                    value={task.title}
+                                                    onChange={(e) =>
+                                                        handleEditTask(
+                                                            task.id,
+                                                            {
+                                                                title: e.target
+                                                                    .value,
+                                                            }
+                                                        )
+                                                    }
+                                                    className="w-full sm:w-auto"
+                                                />
+                                            </div>
+                                        ) : (
+                                            <h3
+                                                className={`font-medium ${task.completed ? 'line-through text-muted-foreground' : ''}`}
+                                            >
+                                                {task.title}
+                                            </h3>
+                                        )}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        {editMode[task.id] ? (
+                                            <CustomSelect
+                                                value={task.priority}
+                                                onChange={(value) =>
                                                     handleEditTask(task.id, {
-                                                        title: e.target.value,
+                                                        priority:
+                                                            value as Task['priority'],
                                                     })
                                                 }
-                                                className="w-full sm:w-auto"
+                                                options={[
+                                                    {
+                                                        value: 'low',
+                                                        label: 'Low',
+                                                        color: 'bg-secondary dark:bg-black',
+                                                    },
+                                                    {
+                                                        value: 'medium',
+                                                        label: 'Medium',
+                                                        color: 'bg-primary text-white dark:text-black',
+                                                    },
+                                                    {
+                                                        value: 'high',
+                                                        label: 'High',
+                                                        color: 'bg-destructive',
+                                                    },
+                                                ]}
                                             />
-                                        </div>
-                                    ) : (
-                                        <h3
-                                            className={`font-medium ${task.completed ? 'line-through text-muted-foreground' : ''}`}
+                                        ) : (
+                                            <Badge
+                                                variant={
+                                                    task.priority === 'high'
+                                                        ? 'destructive'
+                                                        : task.priority ===
+                                                            'medium'
+                                                          ? 'default'
+                                                          : 'secondary'
+                                                }
+                                            >
+                                                {task.priority}
+                                            </Badge>
+                                        )}
+                                        {editMode[task.id] ? (
+                                            <CustomSelect
+                                                value={task.progress}
+                                                onChange={(value) =>
+                                                    handleProgressChange(
+                                                        task.id,
+                                                        value as Task['progress']
+                                                    )
+                                                }
+                                                options={[
+                                                    {
+                                                        value: 'not started',
+                                                        label: 'Not Started',
+                                                        color: 'bg-white dark:bg-slate-900',
+                                                    },
+                                                    {
+                                                        value: 'in progress',
+                                                        label: 'In Progress',
+                                                        color: 'bg-orange-300 dark:bg-yellow-300 dark:text-black',
+                                                    },
+                                                    {
+                                                        value: 'ready for testing',
+                                                        label: 'Ready For Testing',
+                                                        color: 'bg-blue-300 dark:bg-blue-600',
+                                                    },
+                                                    {
+                                                        value: 'finished',
+                                                        label: 'Finished',
+                                                        color: 'bg-green-300 dark:bg-green-600',
+                                                    },
+                                                ]}
+                                            />
+                                        ) : (
+                                            <span
+                                                className={`text-xs rounded p-1 dark:font-semibold ${
+                                                    task.progress ===
+                                                    'not started'
+                                                        ? 'border-gray-300'
+                                                        : task.progress ===
+                                                            'in progress'
+                                                          ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
+                                                          : task.progress ===
+                                                              'ready for testing'
+                                                            ? 'border-blue-300 bg-blue-300 dark:border-blue-600 dark:bg-blue-600'
+                                                            : 'border-green-300 bg-green-300 dark:border-green-600 dark:bg-green-600'
+                                                }`}
+                                            >
+                                                {task.progress}
+                                            </span>
+                                        )}
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className={
+                                                editMode[task.id]
+                                                    ? 'bg-gray-200 dark:bg-gray-900 p-2'
+                                                    : ''
+                                            }
+                                            onClick={() =>
+                                                handleEditIconClick(task.id)
+                                            }
                                         >
-                                            {task.title}
-                                        </h3>
-                                    )}
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className={
-                                            editMode[task.id]
-                                                ? 'bg-gray-200 dark:bg-gray-900 p-2'
-                                                : ''
-                                        }
-                                        onClick={() =>
-                                            handleEditIconClick(task.id)
-                                        }
-                                    >
-                                        <FilePenIcon className="w-4 h-4" />
-                                        <span className="sr-only">
-                                            Edit task
-                                        </span>
-                                    </Button>
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() =>
-                                            handleDeleteTask(task.id)
-                                        }
-                                    >
-                                        <TrashIcon className="w-4 h-4" />
-                                        <span className="sr-only">
-                                            Delete task
-                                        </span>
-                                    </Button>
+                                            <FilePenIcon className="w-4 h-4" />
+                                            <span className="sr-only">
+                                                Edit task
+                                            </span>
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() =>
+                                                handleDeleteTask(task.id)
+                                            }
+                                        >
+                                            <TrashIcon className="w-4 h-4" />
+                                            <span className="sr-only">
+                                                Delete task
+                                            </span>
+                                        </Button>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div className="md:hidden flex items-center justify-between pt-2 pl-3">
-                                <div className="flex items-center gap-2">
-                                    {editMode[task.id] ? (
-                                        <CustomSelect
-                                            value={task.priority}
-                                            onChange={(value) =>
-                                                handleEditTask(task.id, {
-                                                    priority:
-                                                        value as Task['priority'],
-                                                })
-                                            }
-                                            options={[
-                                                {
-                                                    value: 'low',
-                                                    label: 'Low',
-                                                    color: 'bg-secondary dark:bg-black',
-                                                },
-                                                {
-                                                    value: 'medium',
-                                                    label: 'Medium',
-                                                    color: 'bg-primary text-white dark:text-black',
-                                                },
-                                                {
-                                                    value: 'high',
-                                                    label: 'High',
-                                                    color: 'bg-destructive',
-                                                },
-                                            ]}
-                                        />
-                                    ) : (
-                                        <Badge
-                                            variant={
-                                                task.priority === 'high'
-                                                    ? 'destructive'
-                                                    : task.priority === 'medium'
-                                                      ? 'default'
-                                                      : 'secondary'
-                                            }
-                                        >
-                                            {task.priority}
-                                        </Badge>
-                                    )}
-                                </div>
-                            </div>
-                            <div className="md:hidden flex items-center justify-between pt-2 pl-3">
-                                <div className="flex items-center gap-2">
-                                    {editMode[task.id] ? (
-                                        <CustomSelect
-                                            value={task.progress}
-                                            onChange={(value) =>
-                                                handleProgressChange(
-                                                    task.id,
-                                                    value as Task['progress']
+                                <div className="md:hidden flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <Checkbox
+                                            checked={task.completed}
+                                            onCheckedChange={() =>
+                                                editMode[task.id] &&
+                                                handleToggleTaskCompletion(
+                                                    task.id
                                                 )
                                             }
-                                            options={[
-                                                {
-                                                    value: 'not started',
-                                                    label: 'Not Started',
-                                                    color: 'bg-white dark:bg-slate-900',
-                                                },
-                                                {
-                                                    value: 'in progress',
-                                                    label: 'In Progress',
-                                                    color: 'bg-orange-300 dark:bg-yellow-300 dark:text-black',
-                                                },
-                                                {
-                                                    value: 'ready for testing',
-                                                    label: 'Ready For Testing',
-                                                    color: 'bg-blue-300 dark:bg-blue-600',
-                                                },
-                                                {
-                                                    value: 'finished',
-                                                    label: 'Finished',
-                                                    color: 'bg-green-300 dark:bg-green-600',
-                                                },
-                                            ]}
+                                            disabled={!editMode[task.id]}
                                         />
-                                    ) : (
-                                        <span
-                                            className={`text-xs rounded p-1 dark:font-semibold ${
-                                                task.progress === 'not started'
-                                                    ? 'border-gray-300'
-                                                    : task.progress ===
-                                                        'in progress'
-                                                      ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
-                                                      : task.progress ===
-                                                          'ready for testing'
-                                                        ? 'border-blue-300 bg-blue-300 dark:border-blue-600 dark:bg-blue-600'
-                                                        : 'border-green-300 bg-green-300 dark:border-green-600 dark:bg-green-600'
-                                            }`}
+
+                                        {editMode[task.id] ? (
+                                            <div className="relative">
+                                                <Input
+                                                    value={task.title}
+                                                    onChange={(e) =>
+                                                        handleEditTask(
+                                                            task.id,
+                                                            {
+                                                                title: e.target
+                                                                    .value,
+                                                            }
+                                                        )
+                                                    }
+                                                    className="w-full sm:w-auto"
+                                                />
+                                            </div>
+                                        ) : (
+                                            <h3
+                                                className={`font-medium ${task.completed ? 'line-through text-muted-foreground' : ''}`}
+                                            >
+                                                {task.title}
+                                            </h3>
+                                        )}
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className={
+                                                editMode[task.id]
+                                                    ? 'bg-gray-200 dark:bg-gray-900 p-2'
+                                                    : ''
+                                            }
+                                            onClick={() =>
+                                                handleEditIconClick(task.id)
+                                            }
                                         >
-                                            {task.progress}
-                                        </span>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="mt-2 text-muted-foreground">
-                                {editMode[task.id] ? (
-                                    <Input
-                                        value={task.description}
-                                        onChange={(e) =>
-                                            handleEditTask(task.id, {
-                                                description: e.target.value,
-                                            })
-                                        }
-                                        className="w-full"
-                                    />
-                                ) : (
-                                    <p>{task.description}</p>
-                                )}
-
-                                <div className="flex items-center gap-2 mt-2">
-                                    <CalendarIcon className="w-4 h-4" />
-                                    <span>
-                                        Due:{' '}
-                                        {task.dueDate
-                                            ? format(
-                                                  new Date(task.dueDate),
-                                                  'MMM d, yyyy'
-                                              )
-                                            : 'No due date'}
-                                    </span>
+                                            <FilePenIcon className="w-4 h-4" />
+                                            <span className="sr-only">
+                                                Edit task
+                                            </span>
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() =>
+                                                handleDeleteTask(task.id)
+                                            }
+                                        >
+                                            <TrashIcon className="w-4 h-4" />
+                                            <span className="sr-only">
+                                                Delete task
+                                            </span>
+                                        </Button>
+                                    </div>
                                 </div>
 
-                                <div className="flex items-center gap-2 mt-2">
-                                    <TagIcon className="w-4 h-4" />
+                                <div className="md:hidden flex items-center justify-between pt-2 pl-3">
+                                    <div className="flex items-center gap-2">
+                                        {editMode[task.id] ? (
+                                            <CustomSelect
+                                                value={task.priority}
+                                                onChange={(value) =>
+                                                    handleEditTask(task.id, {
+                                                        priority:
+                                                            value as Task['priority'],
+                                                    })
+                                                }
+                                                options={[
+                                                    {
+                                                        value: 'low',
+                                                        label: 'Low',
+                                                        color: 'bg-secondary dark:bg-black',
+                                                    },
+                                                    {
+                                                        value: 'medium',
+                                                        label: 'Medium',
+                                                        color: 'bg-primary text-white dark:text-black',
+                                                    },
+                                                    {
+                                                        value: 'high',
+                                                        label: 'High',
+                                                        color: 'bg-destructive',
+                                                    },
+                                                ]}
+                                            />
+                                        ) : (
+                                            <Badge
+                                                variant={
+                                                    task.priority === 'high'
+                                                        ? 'destructive'
+                                                        : task.priority ===
+                                                            'medium'
+                                                          ? 'default'
+                                                          : 'secondary'
+                                                }
+                                            >
+                                                {task.priority}
+                                            </Badge>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="md:hidden flex items-center justify-between pt-2 pl-3">
+                                    <div className="flex items-center gap-2">
+                                        {editMode[task.id] ? (
+                                            <CustomSelect
+                                                value={task.progress}
+                                                onChange={(value) =>
+                                                    handleProgressChange(
+                                                        task.id,
+                                                        value as Task['progress']
+                                                    )
+                                                }
+                                                options={[
+                                                    {
+                                                        value: 'not started',
+                                                        label: 'Not Started',
+                                                        color: 'bg-white dark:bg-slate-900',
+                                                    },
+                                                    {
+                                                        value: 'in progress',
+                                                        label: 'In Progress',
+                                                        color: 'bg-orange-300 dark:bg-yellow-300 dark:text-black',
+                                                    },
+                                                    {
+                                                        value: 'ready for testing',
+                                                        label: 'Ready For Testing',
+                                                        color: 'bg-blue-300 dark:bg-blue-600',
+                                                    },
+                                                    {
+                                                        value: 'finished',
+                                                        label: 'Finished',
+                                                        color: 'bg-green-300 dark:bg-green-600',
+                                                    },
+                                                ]}
+                                            />
+                                        ) : (
+                                            <span
+                                                className={`text-xs rounded p-1 dark:font-semibold ${
+                                                    task.progress ===
+                                                    'not started'
+                                                        ? 'border-gray-300'
+                                                        : task.progress ===
+                                                            'in progress'
+                                                          ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
+                                                          : task.progress ===
+                                                              'ready for testing'
+                                                            ? 'border-blue-300 bg-blue-300 dark:border-blue-600 dark:bg-blue-600'
+                                                            : 'border-green-300 bg-green-300 dark:border-green-600 dark:bg-green-600'
+                                                }`}
+                                            >
+                                                {task.progress}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="mt-2 text-muted-foreground">
                                     {editMode[task.id] ? (
                                         <Input
-                                            value={task.tags.join(', ')}
+                                            value={task.description}
                                             onChange={(e) =>
                                                 handleEditTask(task.id, {
-                                                    tags: e.target.value
-                                                        .split(',')
-                                                        .map((tag) =>
-                                                            tag.trim()
-                                                        ),
+                                                    description: e.target.value,
                                                 })
                                             }
                                             className="w-full"
                                         />
                                     ) : (
-                                        <div className="flex flex-wrap gap-2">
-                                            {task.tags.map((tag) => (
-                                                <Badge
-                                                    key={tag}
-                                                    variant="outline"
-                                                >
-                                                    {tag}
-                                                </Badge>
-                                            ))}
-                                        </div>
+                                        <p>{task.description}</p>
                                     )}
-                                </div>
 
-                                <div className="flex items-center gap-2 mt-2">
-                                    <ActivityIcon className="w-4 h-4" />
-                                    <div
-                                        className={`w-full bg-muted rounded-full h-2 ${
-                                            editMode[task.id] &&
-                                            task.progress !== 'not started' &&
-                                            task.progress !== 'finished'
-                                                ? 'cursor-pointer'
-                                                : ''
-                                        }`}
-                                        onClick={(e) =>
-                                            editMode[task.id] &&
-                                            task.progress !== 'not started' &&
-                                            task.progress !== 'finished'
-                                                ? handleProgressBarClick(
-                                                      task.id,
-                                                      e
+                                    <div className="flex items-center gap-2 mt-2">
+                                        <CalendarIcon className="w-4 h-4" />
+                                        <span>
+                                            Due:{' '}
+                                            {task.dueDate
+                                                ? format(
+                                                      new Date(task.dueDate),
+                                                      'MMM d, yyyy'
                                                   )
-                                                : null
-                                        }
-                                    >
-                                        <div
-                                            className={`bg-primary rounded-full h-2 ${
-                                                task.progress ===
-                                                    'not started' ||
-                                                task.progress === 'finished'
-                                                    ? 'pointer-events-none'
-                                                    : 'pointer-events-auto'
-                                            }`}
-                                            style={{
-                                                width: `${task.progressPercentage}%`,
-                                            }}
-                                        />
+                                                : 'No due date'}
+                                        </span>
                                     </div>
-                                    <span>{task.progressPercentage}%</span>
+
+                                    <div className="flex items-center gap-2 mt-2">
+                                        <TagIcon className="w-4 h-4" />
+                                        {editMode[task.id] ? (
+                                            <Input
+                                                value={task.tags.join(', ')}
+                                                onChange={(e) =>
+                                                    handleEditTask(task.id, {
+                                                        tags: e.target.value
+                                                            .split(',')
+                                                            .map((tag) =>
+                                                                tag.trim()
+                                                            ),
+                                                    })
+                                                }
+                                                className="w-full"
+                                            />
+                                        ) : (
+                                            <div className="flex flex-wrap gap-2">
+                                                {task.tags.map((tag) => (
+                                                    <Badge
+                                                        key={tag}
+                                                        variant="outline"
+                                                    >
+                                                        {tag}
+                                                    </Badge>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="flex items-center gap-2 mt-2">
+                                        <ActivityIcon className="w-4 h-4" />
+                                        <div
+                                            className={`w-full bg-muted rounded-full h-2 ${
+                                                editMode[task.id] &&
+                                                task.progress !==
+                                                    'not started' &&
+                                                task.progress !== 'finished'
+                                                    ? 'cursor-pointer'
+                                                    : ''
+                                            }`}
+                                            onClick={(e) =>
+                                                editMode[task.id] &&
+                                                task.progress !==
+                                                    'not started' &&
+                                                task.progress !== 'finished'
+                                                    ? handleProgressBarClick(
+                                                          task.id,
+                                                          e
+                                                      )
+                                                    : null
+                                            }
+                                        >
+                                            <div
+                                                className={`bg-primary rounded-full h-2 ${
+                                                    task.progress ===
+                                                        'not started' ||
+                                                    task.progress === 'finished'
+                                                        ? 'pointer-events-none'
+                                                        : 'pointer-events-auto'
+                                                }`}
+                                                style={{
+                                                    width: `${task.progressPercentage}%`,
+                                                }}
+                                            />
+                                        </div>
+                                        <span>{task.progressPercentage}%</span>
+                                    </div>
                                 </div>
-                            </div>
-                        </Card>
-                    ))}
+                            </Card>
+                        ))}
                 </div>
             </div>
         </div>
