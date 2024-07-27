@@ -175,6 +175,10 @@ export function ToDo() {
 
     const [currentList, setCurrentList] = useState<List | null>(null);
 
+    const [listEditMode, setListEditMode] = useState<{
+        [key: string]: boolean;
+    }>({});
+
     const [newTask, setNewTask] = useState<Partial<Task>>({
         title: '',
         description: '',
@@ -304,29 +308,34 @@ export function ToDo() {
         setEditMode((prev) => ({ ...prev, [taskId]: !prev[taskId] }));
     };
 
+    const handleAddList = () => {
+        const newListId = nanoid();
+        setLists([
+            ...lists,
+            {
+                id: newListId,
+                name: 'New List',
+                tasks: [],
+            },
+        ]);
+        setListEditMode((prev) => ({ ...prev, [newListId]: true }));
+        setCurrentList({
+            id: newListId,
+            name: 'New List',
+            tasks: [],
+        });
+    };
+
     return (
         <div className="flex flex-col lg:flex-row h-screen w-full">
             <div className="w-full pt-4 px-6 lg:w-64 lg:pt-6">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-lg font-bold">To-Do Lists</h2>
-                    <Button
-                        size="sm"
-                        onClick={() =>
-                            setLists([
-                                ...lists,
-                                {
-                                    id: nanoid(),
-                                    name: 'New List',
-                                    tasks: [],
-                                },
-                            ])
-                        }
-                    >
+                    <Button size="sm" onClick={handleAddList}>
                         <PlusIcon className="w-4 h-4 mr-2" />
                         Add List
                     </Button>
                 </div>
-
                 {lists.length === 0 ? (
                     <Button onClick={handleGenerateTemplateLists}>
                         Generate Template Lists
@@ -334,19 +343,74 @@ export function ToDo() {
                 ) : (
                     <div className="space-y-2">
                         {lists.map((list) => (
-                            <Button
+                            <div
                                 key={list.id}
-                                variant={
-                                    list.id === currentList?.id &&
-                                    currentList.id
-                                        ? 'default'
-                                        : 'ghost'
-                                }
-                                className="w-full justify-start"
-                                onClick={() => setCurrentList(list)}
+                                className="flex items-center gap-4"
                             >
-                                {list.name}
-                            </Button>
+                                {listEditMode[list.id] ? (
+                                    <Input
+                                        value={list.name}
+                                        onChange={(e) =>
+                                            setLists((prevLists) =>
+                                                prevLists.map((prevList) =>
+                                                    prevList.id === list.id
+                                                        ? {
+                                                              ...prevList,
+                                                              name: e.target
+                                                                  .value,
+                                                          }
+                                                        : prevList
+                                                )
+                                            )
+                                        }
+                                        onBlur={() =>
+                                            setListEditMode((prev) => ({
+                                                ...prev,
+                                                [list.id]: false,
+                                            }))
+                                        }
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                setListEditMode((prev) => ({
+                                                    ...prev,
+                                                    [list.id]: false,
+                                                }));
+                                            }
+                                        }}
+                                        autoFocus
+                                        className="flex-grow"
+                                    />
+                                ) : (
+                                    <Button
+                                        variant={
+                                            list.id === currentList?.id
+                                                ? 'default'
+                                                : 'ghost'
+                                        }
+                                        className="flex-grow justify-start"
+                                        onClick={() => setCurrentList(list)}
+                                    >
+                                        {list.name}
+                                    </Button>
+                                )}
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className={
+                                        listEditMode[list.id]
+                                            ? 'bg-gray-200 dark:bg-slate-800'
+                                            : ''
+                                    }
+                                    onClick={() =>
+                                        setListEditMode((prev) => ({
+                                            ...prev,
+                                            [list.id]: !prev[list.id],
+                                        }))
+                                    }
+                                >
+                                    <FilePenIcon className="w-4 h-4" />
+                                </Button>
+                            </div>
                         ))}
                     </div>
                 )}

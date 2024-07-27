@@ -43,3 +43,9 @@ let's at first actually not display any lists, but lets give the user a button t
 also make it so when the user generates lists the first list does get selected
 
 build -> if type errs -> fix type errs -> back to BOL until type errs fixed
+
+When writing tags u cannot use spaces and gotta use commas for making multiple tags
+
+when adding a list let me give it a name and also let me change a name of any list, use the same edit icon mechanism as is in the cards for this, just add the edit icon button behaving the same way into the switchers for the lists for turning that list into an input, but in the case of creating a new one make it so that one is already defaultly at edit mode and already focused onto the input
+
+when in the list edit mode I need the button with the edit icon to be more gray and I need the list name element to be just as wide when it turns into an input as it was before and I need to be capable to leave the edit list state when clicking the edit icon again or clicking enter within the input
