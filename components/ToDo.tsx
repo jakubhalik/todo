@@ -100,7 +100,7 @@ export function ToDo() {
     const [lists, setLists] = useState<List[]>([]);
 
     const handleGenerateTemplateLists = () => {
-        const newLists = [
+        const newLists: List[] = [
             {
                 id: 'list1',
                 name: 'Personal',
@@ -109,10 +109,10 @@ export function ToDo() {
                         id: 'task1',
                         title: 'Grocery shopping',
                         description: 'Buy milk, eggs, and bread',
-                        priority: 'high',
+                        priority: 'high' as 'high',
                         dueDate: '2023-06-15',
                         tags: ['errands', 'home'],
-                        progress: 'in progress',
+                        progress: 'in progress' as 'in progress',
                         progressPercentage: 33,
                         completed: false,
                     },
@@ -120,10 +120,10 @@ export function ToDo() {
                         id: 'task2',
                         title: 'Finish report',
                         description: 'Complete the quarterly report for work',
-                        priority: 'medium',
+                        priority: 'medium' as 'medium',
                         dueDate: '2023-06-30',
                         tags: ['work', 'office'],
-                        progress: 'finished',
+                        progress: 'finished' as 'finished',
                         progressPercentage: 100,
                         completed: false,
                     },
@@ -131,10 +131,10 @@ export function ToDo() {
                         id: 'task3',
                         title: 'Call girlfriend',
                         description: 'Remember to call your GF this weekend',
-                        priority: 'low',
+                        priority: 'low' as 'low',
                         dueDate: '2023-06-12',
                         tags: ['personal', 'family'],
-                        progress: 'not started',
+                        progress: 'not started' as 'not started',
                         progressPercentage: 0,
                         completed: false,
                     },
@@ -148,10 +148,10 @@ export function ToDo() {
                         id: 'task4',
                         title: 'Prepare presentation',
                         description: 'Create slides for the client meeting',
-                        priority: 'high',
+                        priority: 'high' as 'high',
                         dueDate: '2023-06-20',
                         tags: ['work', 'presentation'],
-                        progress: 'in progress',
+                        progress: 'in progress' as 'in progress',
                         progressPercentage: 33,
                         completed: false,
                     },
@@ -159,10 +159,10 @@ export function ToDo() {
                         id: 'task5',
                         title: 'Attend team meeting',
                         description: 'Join the weekly team meeting',
-                        priority: 'medium',
+                        priority: 'medium' as 'medium',
                         dueDate: '2023-06-17',
                         tags: ['work', 'meeting'],
-                        progress: 'not started',
+                        progress: 'not started' as 'not started',
                         progressPercentage: 0,
                         completed: false,
                     },
@@ -195,8 +195,8 @@ export function ToDo() {
                 id: nanoid(),
             } as Task;
             setCurrentList((prevList) => ({
-                ...prevList,
-                tasks: [...prevList.tasks, newTaskWithId],
+                ...(prevList as List),
+                tasks: [...(prevList as List).tasks, newTaskWithId],
             }));
             setNewTask({
                 title: '',
@@ -213,8 +213,8 @@ export function ToDo() {
 
     const handleEditTask = (taskId: string, updatedTask: Partial<Task>) => {
         setCurrentList((prevList) => ({
-            ...prevList,
-            tasks: prevList.tasks.map((task) =>
+            ...(prevList as List),
+            tasks: (prevList as List).tasks.map((task) =>
                 task.id === taskId ? { ...task, ...updatedTask } : task
             ),
         }));
@@ -222,15 +222,17 @@ export function ToDo() {
 
     const handleDeleteTask = (taskId: string) => {
         setCurrentList((prevList) => ({
-            ...prevList,
-            tasks: prevList.tasks.filter((task) => task.id !== taskId),
+            ...(prevList as List),
+            tasks: (prevList as List).tasks.filter(
+                (task) => task.id !== taskId
+            ),
         }));
     };
 
     const handleToggleTaskCompletion = (taskId: string) => {
         setCurrentList((prevList) => ({
-            ...prevList,
-            tasks: prevList.tasks.map((task) =>
+            ...(prevList as List),
+            tasks: (prevList as List).tasks.map((task) =>
                 task.id === taskId
                     ? { ...task, completed: !task.completed }
                     : task
@@ -243,8 +245,8 @@ export function ToDo() {
         progress: Task['progress']
     ) => {
         setCurrentList((prevList) => ({
-            ...prevList,
-            tasks: prevList.tasks.map((task) => {
+            ...(prevList as List),
+            tasks: (prevList as List).tasks.map((task) => {
                 if (task.id === taskId) {
                     let progressPercentage = task.progressPercentage;
                     switch (progress) {
@@ -281,8 +283,8 @@ export function ToDo() {
         const clickX = e.clientX - rect.left;
         const newProgressPercentage = Math.floor((clickX / rect.width) * 100);
         setCurrentList((prevList) => ({
-            ...prevList,
-            tasks: prevList.tasks.map((task) => {
+            ...(prevList as List),
+            tasks: (prevList as List).tasks.map((task) => {
                 if (
                     task.id === taskId &&
                     task.progress !== 'not started' &&

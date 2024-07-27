@@ -41,3 +41,5 @@ make the popup show up for inputs only when width is smaller than 400px
 let's at first actually not display any lists, but lets give the user a button to generate template tasks, which will add the tasks that are right now in the setList
 
 also make it so when the user generates lists the first list does get selected
+
+build -> if type errs -> fix type errs -> back to BOL until type errs fixed
