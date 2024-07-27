@@ -20,7 +20,13 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 
-export function DatePickerWithPresets({ date, onChange }) {
+export function DatePickerWithPresets({
+    date,
+    onChange,
+}: {
+    date: Date | undefined;
+    onChange: (date: Date | undefined) => void;
+}) {
     return (
         <Popover>
             <PopoverTrigger asChild>

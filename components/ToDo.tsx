@@ -790,16 +790,16 @@ export function ToDo() {
                                         <p>{task.description}</p>
                                     )}
                                     <div className="flex items-center gap-2 mt-2">
-                                        <CalendarIcon className="w-4 h-4" />
-
                                         {editMode[task.id] ? (
                                             <DatePickerWithPresets
                                                 date={new Date(task.dueDate)}
                                                 onChange={(newDate) =>
                                                     handleEditTask(task.id, {
-                                                        dueDate: newDate
-                                                            .toISOString()
-                                                            .split('T')[0],
+                                                        dueDate:
+                                                            newDate &&
+                                                            newDate
+                                                                .toISOString()
+                                                                .split('T')[0],
                                                     })
                                                 }
                                             />
