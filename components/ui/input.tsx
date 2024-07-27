@@ -21,7 +21,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                     onFocus={() => setIsFocused(true)}
                     onBlur={() => setIsFocused(false)}
                 />
-                {isFocused && (
+                {isFocused && window.innerWidth < 400 && (
                     <div className="fixed top-1/4 left-1/2 w-10/12 -translate-x-1/2 z-50 shadow-lg bg-slate-800 rounded border-ring p-2">
                         <input
                             type={type}

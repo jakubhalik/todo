@@ -36,4 +36,4 @@ let's in the case of sm: make the input become a popup when focused, so it is wi
 
 Let's make the description and tags editable when in edit state
 
-
+make the popup show up for inputs only when width is smaller than 400px
