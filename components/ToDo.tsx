@@ -359,14 +359,17 @@ export function ToDo() {
                                     />
 
                                     {editMode[task.id] ? (
-                                        <Input
-                                            value={task.title}
-                                            onChange={(e) =>
-                                                handleEditTask(task.id, {
-                                                    title: e.target.value,
-                                                })
-                                            }
-                                        />
+                                        <div className="relative">
+                                            <Input
+                                                value={task.title}
+                                                onChange={(e) =>
+                                                    handleEditTask(task.id, {
+                                                        title: e.target.value,
+                                                    })
+                                                }
+                                                className="w-full sm:w-auto"
+                                            />
+                                        </div>
                                     ) : (
                                         <h3
                                             className={`font-medium ${task.completed ? 'line-through text-muted-foreground' : ''}`}
