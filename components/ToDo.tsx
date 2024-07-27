@@ -324,7 +324,9 @@ export function ToDo() {
             </div>
             <div className="flex-1 p-6 order-last lg:order-none">
                 <div className="flex items-center justify-between mb-4">
-                    <h1 className="text-2xl font-bold">{currentList.name}</h1>
+                    <h1 className="text-xl sm:text-2xl font-bold pr-2">
+                        {currentList.name}
+                    </h1>
                     <div className="flex items-center gap-2">
                         <Input
                             type="text"
