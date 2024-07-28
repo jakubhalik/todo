@@ -121,9 +121,13 @@ Integrate all deletions in the ToDo for the use of the deleteConfirmationPopup
 
 do not allow to give a list name that is longer than 15 characters
 
+change the title of the list according to the new name of the list right after the new name is set
+
+Allright, good, but editing the list name does right now not do a valid put request for it, make it do so
+
 all till here done
 
-change the title of the list according to the new name of the list right after the new name is set
+make the Add Task button clickable only when there is some input in the New Task input
 
 add a Button for hiding or displaying the To-Do Lists section
 

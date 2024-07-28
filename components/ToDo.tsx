@@ -650,31 +650,76 @@ export function ToDo() {
                                 {listEditMode[list.id] ? (
                                     <Input
                                         value={list.name.slice(0, 15)}
-                                        onChange={(e) =>
+                                        onChange={(e) => {
+                                            const updatedName =
+                                                e.target.value.slice(0, 15);
                                             setLists((prevLists) =>
                                                 prevLists.map((prevList) =>
                                                     prevList.id === list.id
                                                         ? {
                                                               ...prevList,
-                                                              name: e.target
-                                                                  .value,
+                                                              name: updatedName,
                                                           }
                                                         : prevList
                                                 )
-                                            )
-                                        }
-                                        onBlur={() =>
+                                            );
+                                            if (currentList?.id === list.id) {
+                                                setCurrentList((prevList) =>
+                                                    prevList
+                                                        ? {
+                                                              ...prevList,
+                                                              name: updatedName,
+                                                          }
+                                                        : prevList
+                                                );
+                                            }
+                                        }}
+                                        onBlur={() => {
                                             setListEditMode((prev) => ({
                                                 ...prev,
                                                 [list.id]: false,
-                                            }))
-                                        }
+                                            }));
+                                            const updatedList = lists.find(
+                                                (prevList) =>
+                                                    prevList.id === list.id
+                                            );
+                                            if (updatedList) {
+                                                axios
+                                                    .put(
+                                                        `${endpointLists}/${list.id}`,
+                                                        updatedList
+                                                    )
+                                                    .catch((error) => {
+                                                        console.error(
+                                                            'Error updating list name:',
+                                                            error
+                                                        );
+                                                    });
+                                            }
+                                        }}
                                         onKeyDown={(e) => {
                                             if (e.key === 'Enter') {
                                                 setListEditMode((prev) => ({
                                                     ...prev,
                                                     [list.id]: false,
                                                 }));
+                                                const updatedList = lists.find(
+                                                    (prevList) =>
+                                                        prevList.id === list.id
+                                                );
+                                                if (updatedList) {
+                                                    axios
+                                                        .put(
+                                                            `${endpointLists}/${list.id}`,
+                                                            updatedList
+                                                        )
+                                                        .catch((error) => {
+                                                            console.error(
+                                                                'Error updating list name:',
+                                                                error
+                                                            );
+                                                        });
+                                                }
                                             }
                                         }}
                                         autoFocus
