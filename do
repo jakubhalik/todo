@@ -131,8 +131,10 @@ Great, but it right now still does not work for adding new tasks, change that up
 
 make the Add Task button clickable only when there is some input in the New Task input
 
-all till here done
-
 add a Button for hiding or displaying the To-Do Lists section
+
+make more pretty in light mode
+
+all till here done
 
 the Personal and Work lists both have highlighted backgrounds that is supposed to be had only by the selected list no matter what is selected and when I delete one, I delete both and when I edit name of one, I edit name of both, but it happens only on like every third or fith generating of template lists, fix that

@@ -168,6 +168,8 @@ export function ToDo() {
 
     const [listIdForDeletingList, setListIdForDeletingList] = useState('');
 
+    const [showLists, setShowLists] = useState(true);
+
     const handleGenerateTemplateLists = async () => {
         const newLists: List[] = [
             {
@@ -636,87 +638,76 @@ export function ToDo() {
 
     return (
         <div className="flex flex-col lg:flex-row h-screen w-full">
-            <div className="w-full pt-4 px-8 lg:w-[440px] lg:pt-6">
-                <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-bold flex-1 mr-2">
-                        To-Do Lists
-                    </h2>
-                    <Button
-                        size="sm"
-                        className="flex-1 mr-2 bg-red-300 dark:bg-transparent dark:border dark:border-red-400 dark:text-red-400"
-                        onClick={handleDeleteAllListsPopup}
-                    >
-                        <TrashIcon className="w-4 h-4 mr-2 dark:text-red-400" />
-                        Delete All Lists
-                    </Button>
-                    <Button size="sm" onClick={handleAddList}>
-                        <PlusIcon className="flex-1 w-4 h-4 mr-2" />
-                        Add List
-                    </Button>
-                </div>
-                {lists.length === 0 ? (
-                    <Button onClick={handleGenerateTemplateLists}>
-                        Generate Template Lists
-                    </Button>
-                ) : (
-                    <div className="space-y-2">
-                        {lists.map((list) => (
-                            <div
-                                key={list.id}
-                                className="flex items-center gap-4"
-                            >
-                                {listEditMode[list.id] ? (
-                                    <Input
-                                        value={list.name.slice(0, 15)}
-                                        onChange={(e) => {
-                                            const updatedName =
-                                                e.target.value.slice(0, 15);
-                                            setLists((prevLists) =>
-                                                prevLists.map((prevList) =>
-                                                    prevList.id === list.id
-                                                        ? {
-                                                              ...prevList,
-                                                              name: updatedName,
-                                                          }
-                                                        : prevList
-                                                )
-                                            );
-                                            if (currentList?.id === list.id) {
-                                                setCurrentList((prevList) =>
-                                                    prevList
-                                                        ? {
-                                                              ...prevList,
-                                                              name: updatedName,
-                                                          }
-                                                        : prevList
-                                                );
-                                            }
-                                        }}
-                                        onBlur={() => {
-                                            setListEditMode((prev) => ({
-                                                ...prev,
-                                                [list.id]: false,
-                                            }));
-                                            const updatedList = lists.find(
-                                                (prevList) =>
-                                                    prevList.id === list.id
-                                            );
-                                            if (updatedList) {
-                                                axios
-                                                    .put(
-                                                        `${endpointLists}/${list.id}`,
-                                                        updatedList
+            <div className="pt-8 py-4 pl-8">
+                <Button
+                    size="sm"
+                    className="bg-blue-500 hover:bg-blue-600 active:bg-blue-700 dark:bg-blue-300 dark:hover:bg-blue-400 dark:active:bg-blue-500"
+                    onClick={() => setShowLists(!showLists)}
+                >
+                    {showLists ? 'Hide Lists' : 'Show Lists'}
+                </Button>
+            </div>
+            {showLists && (
+                <div className="w-full pt-4 px-8 lg:w-[440px] lg:pt-6">
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-lg font-bold flex-1 mr-2">
+                            To-Do Lists
+                        </h2>
+                        <Button
+                            size="sm"
+                            className="flex-1 mr-2 bg-red-500 hover:bg-red-600 active:bg-red-700 dark:bg-transparent dark:border dark:border-red-400 dark:hover:border-red-500 dark:active:border-red-600 dark:text-red-400 dark:hover:text-red-500 dark:active:text-red-600"
+                            onClick={handleDeleteAllListsPopup}
+                        >
+                            <TrashIcon className="w-4 h-4 mr-2 dark:text-red-400 dark:hover:text-red-500 dark:active:text-red-600" />
+                            Delete All Lists
+                        </Button>
+                        <Button size="sm" onClick={handleAddList}>
+                            <PlusIcon className="flex-1 w-4 h-4 mr-2" />
+                            Add List
+                        </Button>
+                    </div>
+                    {lists.length === 0 ? (
+                        <Button onClick={handleGenerateTemplateLists}>
+                            Generate Template Lists
+                        </Button>
+                    ) : (
+                        <div className="space-y-2">
+                            {lists.map((list) => (
+                                <div
+                                    key={list.id}
+                                    className="flex items-center gap-4"
+                                >
+                                    {listEditMode[list.id] ? (
+                                        <Input
+                                            value={list.name.slice(0, 15)}
+                                            onChange={(e) => {
+                                                const updatedName =
+                                                    e.target.value.slice(0, 15);
+                                                setLists((prevLists) =>
+                                                    prevLists.map((prevList) =>
+                                                        prevList.id === list.id
+                                                            ? {
+                                                                  ...prevList,
+                                                                  name: updatedName,
+                                                              }
+                                                            : prevList
                                                     )
-                                                    .catch((error) => {
-                                                        console.error(
-                                                            'Error updating list name:',
-                                                            error
-                                                        );
-                                                    });
-                                            }
-                                        }}
-                                        onKeyDown={(e) => {
-                                            if (e.key === 'Enter') {
+                                                );
+                                                if (
+                                                    currentList?.id === list.id
+                                                ) {
+                                                    setCurrentList(
+                                                        (prevList) =>
+                                                            prevList
+                                                                ? {
+                                                                      ...prevList,
+                                                                      name: updatedName,
+                                                                  }
+                                                                : prevList
+                                                    );
+                                                }
+                                            }}
+                                            onBlur={() => {
                                                 setListEditMode((prev) => ({
                                                     ...prev,
                                                     [list.id]: false,
@@ -738,57 +729,84 @@ export function ToDo() {
                                                             );
                                                         });
                                                 }
+                                            }}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    setListEditMode((prev) => ({
+                                                        ...prev,
+                                                        [list.id]: false,
+                                                    }));
+                                                    const updatedList =
+                                                        lists.find(
+                                                            (prevList) =>
+                                                                prevList.id ===
+                                                                list.id
+                                                        );
+                                                    if (updatedList) {
+                                                        axios
+                                                            .put(
+                                                                `${endpointLists}/${list.id}`,
+                                                                updatedList
+                                                            )
+                                                            .catch((error) => {
+                                                                console.error(
+                                                                    'Error updating list name:',
+                                                                    error
+                                                                );
+                                                            });
+                                                    }
+                                                }
+                                            }}
+                                            autoFocus
+                                            className="flex-grow"
+                                        />
+                                    ) : (
+                                        <Button
+                                            variant={
+                                                list.id === currentList?.id
+                                                    ? 'default'
+                                                    : 'ghost'
                                             }
-                                        }}
-                                        autoFocus
-                                        className="flex-grow"
-                                    />
-                                ) : (
+                                            className="flex-grow justify-start"
+                                            onClick={() => setCurrentList(list)}
+                                        >
+                                            {list.name}
+                                        </Button>
+                                    )}
                                     <Button
-                                        variant={
-                                            list.id === currentList?.id
-                                                ? 'default'
-                                                : 'ghost'
+                                        variant="ghost"
+                                        size="icon"
+                                        className={
+                                            listEditMode[list.id]
+                                                ? 'bg-gray-200 dark:bg-slate-800 px-3'
+                                                : 'px-3'
                                         }
-                                        className="flex-grow justify-start"
-                                        onClick={() => setCurrentList(list)}
+                                        onClick={() =>
+                                            setListEditMode((prev) => ({
+                                                ...prev,
+                                                [list.id]: !prev[list.id],
+                                            }))
+                                        }
                                     >
-                                        {list.name}
+                                        <FilePenIcon className="w-4 h-4" />
                                     </Button>
-                                )}
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className={
-                                        listEditMode[list.id]
-                                            ? 'bg-gray-200 dark:bg-slate-800 px-3'
-                                            : 'px-3'
-                                    }
-                                    onClick={() =>
-                                        setListEditMode((prev) => ({
-                                            ...prev,
-                                            [list.id]: !prev[list.id],
-                                        }))
-                                    }
-                                >
-                                    <FilePenIcon className="w-4 h-4" />
-                                </Button>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="px-3"
-                                    onClick={() => {
-                                        setListIdForDeletingList(list.id);
-                                        handleDeleteListPopup();
-                                    }}
-                                >
-                                    <TrashIcon className="w-4 h-4" />
-                                </Button>
-                            </div>
-                        ))}
-                    </div>
-                )}
-            </div>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="px-3"
+                                        onClick={() => {
+                                            setListIdForDeletingList(list.id);
+                                            handleDeleteListPopup();
+                                        }}
+                                    >
+                                        <TrashIcon className="w-4 h-4" />
+                                    </Button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
             <div
                 className={`flex-1 ${innerWidth >= 350 ? 'p-6' : 'py-6 px-1'} order-last lg:order-none`}
             >
@@ -1360,7 +1378,7 @@ export function ToDo() {
                         </AlertDialogTitle>
                         <div className="flex justify-between gap-2 px-10">
                             <AlertDialogAction
-                                className="flex-1 mr-2 py-1 bg-red-300 hover:bg-red-400 active:bg-red-500"
+                                className="flex-1 mr-2 py-1 bg-red-500 hover:bg-red-600 active:bg-red-700 dark:bg-red-300 dark:hover:bg-red-400 dark:active:bg-red-500"
                                 onClick={() => {
                                     deleteTaskPopup &&
                                         handleDeleteTask(taskIdForDeletingTask);
@@ -1398,10 +1416,10 @@ export function ToDo() {
                 {currentList && currentList.tasks.length > 0 && (
                     <Button
                         size="sm"
-                        className="w-full bg-red-300 dark:bg-transparent dark:border dark:border-red-400 dark:text-red-400"
+                        className="w-full bg-red-500 hover:bg-red-600 active:bg-red-700 dark:bg-transparent dark:border dark:border-red-400 dark:hover:border-red-500 dark:active:border-red-600 dark:text-red-400 dark:hover:text-red-500 dark:active:text-red-600"
                         onClick={handleDeleteAllTasksPopup}
                     >
-                        <TrashIcon className="w-4 h-4 mr-2 dark:text-red-400" />
+                        <TrashIcon className="w-4 h-4 mr-2 dark:text-red-400 dark:hover:text-red-500 dark:active:text-red-600" />
                         Delete All Tasks
                     </Button>
                 )}
