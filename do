@@ -113,9 +113,9 @@ make them not in one corner, but for each to take most of one half
 
 make the buttons of the dialog smaller and the yes button bg-red-300
 
-all till here done
-
 build -> if type errs -> fix type errs -> back to BOL until type errs fixed
+
+all till here done
 
 Add a delete all lists button for deleting all lists
 

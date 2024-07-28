@@ -272,7 +272,7 @@ export function ToDo() {
             axios
                 .put(`${endpointLists}/${currentList?.id}`, updatedList)
                 .then((response) => {
-                    setCurrentList(updatedList);
+                    setCurrentList(updatedList as List);
                     setNewTask({
                         title: '',
                         description: '',
@@ -553,7 +553,7 @@ export function ToDo() {
     };
 
     const handleDeleteAllTasks = () => {
-        const updatedList = { ...currentList, tasks: [] };
+        const updatedList = { ...(currentList as List), tasks: [] };
         axios
             .put(`${endpointLists}/${currentList?.id}`, updatedList)
             .then(() => {
@@ -1224,7 +1224,7 @@ export function ToDo() {
                         </AlertDialogTitle>
                         <div className="flex justify-between gap-2 px-10">
                             <AlertDialogAction
-                                className="flex-1 mr-2 py-1 bg-red-300"
+                                className="flex-1 mr-2 py-1 bg-red-300 hover:bg-red-400 active:bg-red-500"
                                 onClick={() => {
                                     handleDeleteAllTasks();
                                     setDeleteConfirmationPopup(false);
