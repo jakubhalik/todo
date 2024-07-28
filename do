@@ -105,9 +105,15 @@ Add a delete all tasks button for deleting all tasks in the selected list
 
 I want the button down there below, I just tho want it to have just as much width as the cards above it and I want it to have a bg-red-400 and for dark: no bg and red border, red icon, red text
 
-all till here done
-
 add a popup of 'Are you sure you want to delete all tasks'?
+
+make the AlertDialogActions be next to each other, not above/below each other
+
+make them not in one corner, but for each to take most of one half
+
+make the buttons of the dialog smaller and the yes button bg-red-300
+
+all till here done
 
 build -> if type errs -> fix type errs -> back to BOL until type errs fixed
 

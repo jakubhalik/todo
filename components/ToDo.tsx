@@ -1,16 +1,30 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
+
 import { format } from 'date-fns';
+
 import { nanoid } from 'nanoid';
+
 import { DatePickerWithPresets } from '@/components/DatePicker';
+
 import axios from 'axios';
+
 import debounce from 'lodash.debounce';
+
+import {
+    AlertDialog,
+    AlertDialogTrigger,
+    AlertDialogContent,
+    AlertDialogTitle,
+    AlertDialogAction,
+} from '@/components/ui/alert-dialog';
 
 interface Task {
     id: string;
@@ -138,6 +152,11 @@ export function ToDo() {
     const progressBarRef = useRef<HTMLDivElement | null>(null);
 
     const endpointLists = process.env.NEXT_PUBLIC_ENDPOINT_LISTS as string;
+
+    const [deleteConfirmationPopup, setDeleteConfirmationPopup] =
+        useState(false);
+
+    const [deleteAllTasksPopup, setDeleteAllTasksPopup] = useState(false);
 
     const handleGenerateTemplateLists = async () => {
         const newLists: List[] = [
@@ -543,6 +562,11 @@ export function ToDo() {
             .catch((error) => {
                 console.error('Error deleting all tasks:', error);
             });
+    };
+
+    const handleDeleteAllTasksPopup = async () => {
+        setDeleteAllTasksPopup(true);
+        setDeleteConfirmationPopup(true);
     };
 
     return (
@@ -1185,12 +1209,46 @@ export function ToDo() {
                             </Card>
                         ))}
                 </div>
+                <AlertDialog
+                    open={deleteConfirmationPopup}
+                    onOpenChange={setDeleteConfirmationPopup}
+                >
+                    <AlertDialogTrigger asChild>
+                        <button className="hidden">Open</button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogTitle>
+                            <span className="flex justify-center">
+                                {`Are you sure you want to delete all ${deleteAllTasksPopup ? 'tasks' : 'links'}?`}
+                            </span>
+                        </AlertDialogTitle>
+                        <div className="flex justify-between gap-2 px-10">
+                            <AlertDialogAction
+                                className="flex-1 mr-2 py-1 bg-red-300"
+                                onClick={() => {
+                                    handleDeleteAllTasks();
+                                    setDeleteConfirmationPopup(false);
+                                }}
+                            >
+                                Yes
+                            </AlertDialogAction>
+                            <AlertDialogAction
+                                className="flex-1 py-1"
+                                onClick={() => {
+                                    setDeleteConfirmationPopup(false);
+                                }}
+                            >
+                                No
+                            </AlertDialogAction>
+                        </div>
+                    </AlertDialogContent>
+                </AlertDialog>
                 <br />
                 {currentList && currentList.tasks.length > 0 && (
                     <Button
                         size="sm"
                         className="w-full bg-red-300 dark:bg-transparent dark:border dark:border-red-400 dark:text-red-400"
-                        onClick={handleDeleteAllTasks}
+                        onClick={handleDeleteAllTasksPopup}
                     >
                         <TrashIcon className="w-4 h-4 mr-2 dark:text-red-400" />
                         Delete All Tasks
