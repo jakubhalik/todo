@@ -172,6 +172,8 @@ export function ToDo() {
 
     const [showLists, setShowLists] = useState(true);
 
+    const [isDeletingAllLists, setIsDeletingAllLists] = useState(false);
+
     const handleGenerateTemplateLists = async () => {
         const personalList = {
             id: nanoid(),
@@ -628,6 +630,7 @@ export function ToDo() {
     };
 
     const handleDeleteAllLists = async () => {
+        setIsDeletingAllLists(true);
         try {
             const response = await axios.get(endpointLists);
             const listsToDelete = response.data;
@@ -643,6 +646,10 @@ export function ToDo() {
             console.log('All lists deleted successfully');
         } catch (error) {
             console.error('Error deleting all lists:', error);
+        } finally {
+            setIsDeletingAllLists(false);
+            setDeleteConfirmationPopup(false);
+            setDeleteAllListsPopup(false);
         }
     };
 
@@ -1401,40 +1408,52 @@ export function ToDo() {
                                     ${deleteAllListsPopup ? 'all lists?' : ''}`}
                             </span>
                         </AlertDialogTitle>
-                        <div className="flex justify-between gap-2 px-10">
-                            <AlertDialogAction
-                                className="flex-1 mr-2 py-1 bg-red-500 hover:bg-red-600 active:bg-red-700 dark:bg-red-300 dark:hover:bg-red-400 dark:active:bg-red-500"
-                                onClick={() => {
-                                    deleteTaskPopup &&
-                                        handleDeleteTask(taskIdForDeletingTask);
-                                    deleteListPopup &&
-                                        handleDeleteList(listIdForDeletingList);
-                                    deleteAllTasksPopup &&
-                                        handleDeleteAllTasks();
-                                    deleteAllListsPopup &&
-                                        handleDeleteAllLists();
-                                    setDeleteConfirmationPopup(false);
-                                    setDeleteTaskPopup(false);
-                                    setDeleteListPopup(false);
-                                    setDeleteAllTasksPopup(false);
-                                    setDeleteAllListsPopup(false);
-                                }}
-                            >
-                                Yes
-                            </AlertDialogAction>
-                            <AlertDialogAction
-                                className="flex-1 py-1"
-                                onClick={() => {
-                                    setDeleteConfirmationPopup(false);
-                                    setDeleteTaskPopup(false);
-                                    setDeleteListPopup(false);
-                                    setDeleteAllTasksPopup(false);
-                                    setDeleteAllListsPopup(false);
-                                }}
-                            >
-                                No
-                            </AlertDialogAction>
-                        </div>
+                        {isDeletingAllLists ? (
+                            <div className="flex justify-center mt-4">
+                                <div className="w-full h-2 bg-gray-200 rounded-full">
+                                    <div className="h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex justify-between gap-2 px-10">
+                                <AlertDialogAction
+                                    className="flex-1 mr-2 py-1 bg-red-500 hover:bg-red-600 active:bg-red-700 dark:bg-red-300 dark:hover:bg-red-400 dark:active:bg-red-500"
+                                    onClick={() => {
+                                        deleteTaskPopup &&
+                                            handleDeleteTask(
+                                                taskIdForDeletingTask
+                                            );
+                                        deleteListPopup &&
+                                            handleDeleteList(
+                                                listIdForDeletingList
+                                            );
+                                        deleteAllTasksPopup &&
+                                            handleDeleteAllTasks();
+                                        deleteAllListsPopup &&
+                                            handleDeleteAllLists();
+                                        setDeleteConfirmationPopup(false);
+                                        setDeleteTaskPopup(false);
+                                        setDeleteListPopup(false);
+                                        setDeleteAllTasksPopup(false);
+                                        setDeleteAllListsPopup(false);
+                                    }}
+                                >
+                                    Yes
+                                </AlertDialogAction>
+                                <AlertDialogAction
+                                    className="flex-1 py-1"
+                                    onClick={() => {
+                                        setDeleteConfirmationPopup(false);
+                                        setDeleteTaskPopup(false);
+                                        setDeleteListPopup(false);
+                                        setDeleteAllTasksPopup(false);
+                                        setDeleteAllListsPopup(false);
+                                    }}
+                                >
+                                    No
+                                </AlertDialogAction>
+                            </div>
+                        )}
                     </AlertDialogContent>
                 </AlertDialog>
                 <br />

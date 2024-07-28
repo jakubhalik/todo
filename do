@@ -139,6 +139,9 @@ the Personal and Work lists both have highlighted backgrounds that is supposed t
 
 the lists are sometimes behaving like they are the same list even tho I am doing the unique id generating with nanoid, the problem that sometimes happens is that only the 'Work' gets posted to the endpoint instead of both of them, this happens like every third time when generating, fix this problem by some explicite handling of this when doing the post, possibly use something else than nanoid for Work while keeping nanoid for Personal, 
 
+after starting handleDeleteAllLists open an AlertDialog with a loading bar until it is done
+
 all till here done
 
-after starting handleDeleteAllLists open an AlertDialog with a loading bar until it is done
+when generating templates display scrolling bar until it is all generated and posted
+
