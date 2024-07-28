@@ -91,12 +91,6 @@ the amount of rows is always just one, at 0 symbols it is supposed to be 1 row, 
 
 optimalize cards responsiveness for galaxy z fold 5 (344 px width)
 
-I want an input with (
-                        'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-                        className
-                    )}
- classNames to be ending on its right far closer to the end of the text in it
-
 Let me write spaces when in the input for tags
 
 Add a bin icon button for deleting a list next to the edit list icon button on its right and add the functionality to delete a list through clicking on it
