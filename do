@@ -117,9 +117,9 @@ build -> if type errs -> fix type errs -> back to BOL until type errs fixed
 
 Add a delete all lists button for deleting all lists
 
-all till here done
-
 Integrate all deletions in the ToDo for the use of the deleteConfirmationPopup
+
+all till here done
 
 do not allow to give a list name that is longer than 15 characters
 

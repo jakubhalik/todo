@@ -160,6 +160,14 @@ export function ToDo() {
 
     const [deleteAllListsPopup, setDeleteAllListsPopup] = useState(false);
 
+    const [deleteTaskPopup, setDeleteTaskPopup] = useState(false);
+
+    const [deleteListPopup, setDeleteListPopup] = useState(false);
+
+    const [taskIdForDeletingTask, setTaskIdForDeletingTask] = useState('');
+
+    const [listIdForDeletingList, setListIdForDeletingList] = useState('');
+
     const handleGenerateTemplateLists = async () => {
         const newLists: List[] = [
             {
@@ -598,6 +606,16 @@ export function ToDo() {
         setDeleteConfirmationPopup(true);
     };
 
+    const handleDeleteTaskPopup = async () => {
+        setDeleteTaskPopup(true);
+        setDeleteConfirmationPopup(true);
+    };
+
+    const handleDeleteListPopup = async () => {
+        setDeleteListPopup(true);
+        setDeleteConfirmationPopup(true);
+    };
+
     return (
         <div className="flex flex-col lg:flex-row h-screen w-full">
             <div className="w-full pt-4 px-8 lg:w-[440px] lg:pt-6">
@@ -696,7 +714,10 @@ export function ToDo() {
                                     variant="ghost"
                                     size="icon"
                                     className="px-3"
-                                    onClick={() => handleDeleteList(list.id)}
+                                    onClick={() => {
+                                        setListIdForDeletingList(list.id);
+                                        handleDeleteListPopup();
+                                    }}
                                 >
                                     <TrashIcon className="w-4 h-4" />
                                 </Button>
@@ -902,9 +923,12 @@ export function ToDo() {
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            onClick={() =>
-                                                handleDeleteTask(task.id)
-                                            }
+                                            onClick={() => {
+                                                setTaskIdForDeletingTask(
+                                                    task.id
+                                                );
+                                                handleDeleteTaskPopup();
+                                            }}
                                         >
                                             <TrashIcon className="w-4 h-4" />
                                             <span className="sr-only">
@@ -985,9 +1009,12 @@ export function ToDo() {
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            onClick={() =>
-                                                handleDeleteTask(task.id)
-                                            }
+                                            onClick={() => {
+                                                setTaskIdForDeletingTask(
+                                                    task.id
+                                                );
+                                                handleDeleteTaskPopup();
+                                            }}
                                         >
                                             <TrashIcon className="w-4 h-4" />
                                             <span className="sr-only">
@@ -1258,18 +1285,28 @@ export function ToDo() {
                     <AlertDialogContent>
                         <AlertDialogTitle>
                             <span className="flex justify-center">
-                                {`Are you sure you want to delete all ${deleteAllTasksPopup ? 'tasks' : 'lists'}?`}
+                                {`Are you sure you want to delete
+                                    ${deleteTaskPopup ? 'the task?' : ''}
+                                    ${deleteListPopup ? 'the list?' : ''}
+                                    ${deleteAllTasksPopup ? 'all tasks?' : ''}
+                                    ${deleteAllListsPopup ? 'all lists?' : ''}`}
                             </span>
                         </AlertDialogTitle>
                         <div className="flex justify-between gap-2 px-10">
                             <AlertDialogAction
                                 className="flex-1 mr-2 py-1 bg-red-300 hover:bg-red-400 active:bg-red-500"
                                 onClick={() => {
+                                    deleteTaskPopup &&
+                                        handleDeleteTask(taskIdForDeletingTask);
+                                    deleteListPopup &&
+                                        handleDeleteList(listIdForDeletingList);
                                     deleteAllTasksPopup &&
                                         handleDeleteAllTasks();
                                     deleteAllListsPopup &&
                                         handleDeleteAllLists();
                                     setDeleteConfirmationPopup(false);
+                                    setDeleteTaskPopup(false);
+                                    setDeleteListPopup(false);
                                     setDeleteAllTasksPopup(false);
                                     setDeleteAllListsPopup(false);
                                 }}
@@ -1280,6 +1317,8 @@ export function ToDo() {
                                 className="flex-1 py-1"
                                 onClick={() => {
                                     setDeleteConfirmationPopup(false);
+                                    setDeleteTaskPopup(false);
+                                    setDeleteListPopup(false);
                                     setDeleteAllTasksPopup(false);
                                     setDeleteAllListsPopup(false);
                                 }}
