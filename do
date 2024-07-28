@@ -135,6 +135,10 @@ add a Button for hiding or displaying the To-Do Lists section
 
 make more pretty in light mode
 
+the Personal and Work lists both have highlighted backgrounds that is supposed to be had only by the selected list no matter what is selected and when I delete one, I delete both and when I edit name of one, I edit name of both, but it happens only on like every third or fith generating of template lists, fix that
+
+the lists are sometimes behaving like they are the same list even tho I am doing the unique id generating with nanoid, the problem that sometimes happens is that only the 'Work' gets posted to the endpoint instead of both of them, this happens like every third time when generating, fix this problem by some explicite handling of this when doing the post, possibly use something else than nanoid for Work while keeping nanoid for Personal, 
+
 all till here done
 
-the Personal and Work lists both have highlighted backgrounds that is supposed to be had only by the selected list no matter what is selected and when I delete one, I delete both and when I edit name of one, I edit name of both, but it happens only on like every third or fith generating of template lists, fix that
+after starting handleDeleteAllLists open an AlertDialog with a loading bar until it is done

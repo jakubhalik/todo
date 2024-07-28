@@ -12,6 +12,8 @@ import { format } from 'date-fns';
 
 import { nanoid } from 'nanoid';
 
+import { v4 as uuidv4 } from 'uuid';
+
 import { DatePickerWithPresets } from '@/components/DatePicker';
 
 import axios from 'axios';
@@ -171,82 +173,105 @@ export function ToDo() {
     const [showLists, setShowLists] = useState(true);
 
     const handleGenerateTemplateLists = async () => {
-        const newLists: List[] = [
-            {
-                id: 'list1',
-                name: 'Personal',
-                tasks: [
-                    {
-                        id: 'task1',
-                        title: 'Grocery shopping',
-                        description: 'Buy milk, eggs, and bread',
-                        priority: 'high' as 'high',
-                        dueDate: '2023-06-15',
-                        tags: ['errands', 'home'],
-                        progress: 'in progress' as 'in progress',
-                        progressPercentage: 33,
-                        completed: false,
-                    },
-                    {
-                        id: 'task2',
-                        title: 'Finish report',
-                        description: 'Complete the quarterly report for work',
-                        priority: 'medium' as 'medium',
-                        dueDate: '2023-06-30',
-                        tags: ['work', 'office'],
-                        progress: 'finished' as 'finished',
-                        progressPercentage: 100,
-                        completed: false,
-                    },
-                    {
-                        id: 'task3',
-                        title: 'Call girlfriend',
-                        description: 'Remember to call your GF this weekend',
-                        priority: 'low' as 'low',
-                        dueDate: '2023-06-12',
-                        tags: ['personal', 'family'],
-                        progress: 'not started' as 'not started',
-                        progressPercentage: 0,
-                        completed: false,
-                    },
-                ],
-            },
-            {
-                id: 'list2',
-                name: 'Work',
-                tasks: [
-                    {
-                        id: 'task4',
-                        title: 'Prepare presentation',
-                        description: 'Create slides for the client meeting',
-                        priority: 'high' as 'high',
-                        dueDate: '2023-06-20',
-                        tags: ['work', 'presentation'],
-                        progress: 'in progress' as 'in progress',
-                        progressPercentage: 33,
-                        completed: false,
-                    },
-                    {
-                        id: 'task5',
-                        title: 'Attend team meeting',
-                        description: 'Join the weekly team meeting',
-                        priority: 'medium' as 'medium',
-                        dueDate: '2023-06-17',
-                        tags: ['work', 'meeting'],
-                        progress: 'not started' as 'not started',
-                        progressPercentage: 0,
-                        completed: false,
-                    },
-                ],
-            },
-        ];
+        const personalList = {
+            id: nanoid(),
+            name: 'Personal',
+            tasks: [
+                {
+                    id: nanoid(),
+                    title: 'Grocery shopping',
+                    description: 'Buy milk, eggs, and bread',
+                    priority: 'high' as 'high',
+                    dueDate: '2023-06-15',
+                    tags: ['errands', 'home'],
+                    progress: 'in progress' as 'in progress',
+                    progressPercentage: 33,
+                    completed: false,
+                },
+                {
+                    id: nanoid(),
+                    title: 'Finish report',
+                    description: 'Complete the quarterly report for work',
+                    priority: 'medium' as 'medium',
+                    dueDate: '2023-06-30',
+                    tags: ['work', 'office'],
+                    progress: 'finished' as 'finished',
+                    progressPercentage: 100,
+                    completed: false,
+                },
+                {
+                    id: nanoid(),
+                    title: 'Call girlfriend',
+                    description: 'Remember to call your GF this weekend',
+                    priority: 'low' as 'low',
+                    dueDate: '2023-06-12',
+                    tags: ['personal', 'family'],
+                    progress: 'not started' as 'not started',
+                    progressPercentage: 0,
+                    completed: false,
+                },
+            ],
+        };
+
+        const workList = {
+            id: uuidv4(),
+            name: 'Work',
+            tasks: [
+                {
+                    id: nanoid(),
+                    title: 'Prepare presentation',
+                    description: 'Create slides for the client meeting',
+                    priority: 'high' as 'high',
+                    dueDate: '2023-06-20',
+                    tags: ['work', 'presentation'],
+                    progress: 'in progress' as 'in progress',
+                    progressPercentage: 33,
+                    completed: false,
+                },
+                {
+                    id: nanoid(),
+                    title: 'Attend team meeting',
+                    description: 'Join the weekly team meeting',
+                    priority: 'medium' as 'medium',
+                    dueDate: '2023-06-17',
+                    tags: ['work', 'meeting'],
+                    progress: 'not started' as 'not started',
+                    progressPercentage: 0,
+                    completed: false,
+                },
+            ],
+        };
+
         try {
-            const responses = await Promise.all(
-                newLists.map((list) => axios.post(endpointLists, list))
+            const personalResponse = await axios.post(
+                endpointLists,
+                personalList
             );
-            const createdLists = responses.map((response) => response.data);
-            setLists(createdLists);
-            setCurrentList(createdLists[0]);
+            console.log('Personal List Response:', personalResponse.data);
+
+            if (personalResponse.data) {
+                const workResponse = await axios.post(endpointLists, workList);
+                console.log('Work List Response:', workResponse.data);
+
+                if (workResponse.data) {
+                    const createdLists = [
+                        personalResponse.data,
+                        workResponse.data,
+                    ];
+                    setLists(createdLists);
+                    setCurrentList(createdLists[0]);
+                } else {
+                    console.error(
+                        'Work list did not return properly:',
+                        workResponse.data
+                    );
+                }
+            } else {
+                console.error(
+                    'Personal list did not return properly:',
+                    personalResponse.data
+                );
+            }
         } catch (error) {
             console.error('Error generating template lists:', error);
         }
