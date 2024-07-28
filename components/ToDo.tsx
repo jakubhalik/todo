@@ -176,6 +176,14 @@ export function ToDo() {
 
     const [isLoading, setIsLoading] = useState(true);
 
+    const [windowWidth, setWindowWidth] = useState(0);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            setWindowWidth(window.innerWidth);
+        }
+    }, []);
+
     const handleGenerateTemplateLists = async () => {
         setIsGeneratingTemplates(true);
         const personalList = {
@@ -693,7 +701,7 @@ export function ToDo() {
                         <h2 className="text-lg font-bold flex-1 mr-2">
                             To-Do Lists
                         </h2>
-                        {window.innerWidth >= 440 && (
+                        {windowWidth >= 440 && (
                             <>
                                 <Button
                                     size="sm"
@@ -711,7 +719,7 @@ export function ToDo() {
                         )}
                     </div>
                     <div className="flex items-center justify-between mb-4">
-                        {window.innerWidth < 440 && (
+                        {windowWidth < 440 && (
                             <>
                                 <Button
                                     size="sm"
@@ -895,7 +903,7 @@ export function ToDo() {
                 </div>
             )}
             <div
-                className={`flex-1 ${window.innerWidth >= 350 ? 'p-6' : 'py-6 px-1'} order-last lg:order-none`}
+                className={`flex-1 ${windowWidth >= 350 ? 'p-6' : 'py-6 px-1'} order-last lg:order-none`}
             >
                 <div className="flex items-center justify-between mb-4 px-2">
                     <h1 className="text-xl sm:text-2xl font-bold pr-2">
