@@ -89,9 +89,15 @@ make the popup input span over more of a height when it has too much text so the
 do not write hardcoded 1 in rows={}, instead have it as rows={rows} , have no style.height anywhere, that is disgusting and shameful and stupid, not needed at all, have a state that is at initial load of popup and then onInput writing checking the amount of words in symbols (letter, number, special symbol, space, whatev) and for each 35 adds one row to the initial one row,
 the amount of rows is always just one, at 0 symbols it is supposed to be 1 row, and for each 35 symbols +1 row, where it is supposed to check on me inputting more things and recalculate if it is not supposed to get more rows again
 
-Let me write spaces when in the input for tags
-
 optimalize cards responsiveness for galaxy z fold 5 (344 px width)
+
+I want an input with (
+                        'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+                        className
+                    )}
+ classNames to be ending on its right far closer to the end of the text in it
+
+Let me write spaces when in the input for tags
 
 Add a bin icon button for deleting a list next to the edit list icon button on its right and add the functionality to delete a list through clicking on it
 

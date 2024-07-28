@@ -514,7 +514,7 @@ export function ToDo() {
 
     return (
         <div className="flex flex-col lg:flex-row h-screen w-full">
-            <div className="w-full pt-4 px-6 lg:w-64 lg:pt-6">
+            <div className="w-full pt-4 px-8 lg:w-64 lg:pt-6">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-lg font-bold">To-Do Lists</h2>
                     <Button size="sm" onClick={handleAddList}>
@@ -601,8 +601,10 @@ export function ToDo() {
                     </div>
                 )}
             </div>
-            <div className="flex-1 p-6 order-last lg:order-none">
-                <div className="flex items-center justify-between mb-4">
+            <div
+                className={`flex-1 ${innerWidth >= 350 ? 'p-6' : 'py-6 px-1'} order-last lg:order-none`}
+            >
+                <div className="flex items-center justify-between mb-4 px-2">
                     <h1 className="text-xl sm:text-2xl font-bold pr-2">
                         {currentList && currentList.name}
                     </h1>
@@ -643,7 +645,6 @@ export function ToDo() {
                                             }
                                             disabled={!editMode[task.id]}
                                         />
-
                                         {editMode[task.id] ? (
                                             <div className="relative">
                                                 <Input
