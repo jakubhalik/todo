@@ -57,23 +57,21 @@ const CustomSelect: React.FC<{
         <div className="relative inline-block w-full pl-3">
             <button
                 type="button"
-                className={`border border-rounded rounded p-1 w-full min-w-[${
-                    value === 'ready for testing' ? '150' : '75'
-                }px] flex justify-between items-center ${
-                    value === 'not started'
+                className={`border border-rounded rounded p-1 w-full min-w-[${value === 'ready for testing' ? '150' : '75'
+                    }px] flex justify-between items-center ${value === 'not started'
                         ? 'border-gray-300'
                         : value === 'in progress'
-                          ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
-                          : value === 'ready for testing'
-                            ? 'border-blue-300 bg-blue-300 dark:border-blue-600 dark:bg-blue-600'
-                            : value === 'high'
-                              ? 'border-destructive bg-destructive'
-                              : value === 'medium'
-                                ? 'border-primary bg-primary text-white dark:text-black'
-                                : value === 'low'
-                                  ? 'border-secondary bg-secondary'
-                                  : 'border-green-300 bg-green-300 dark:border-green-600 dark:bg-green-600'
-                }`}
+                            ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
+                            : value === 'ready for testing'
+                                ? 'border-blue-300 bg-blue-300 dark:border-blue-600 dark:bg-blue-600'
+                                : value === 'high'
+                                    ? 'border-destructive bg-destructive'
+                                    : value === 'medium'
+                                        ? 'border-primary bg-primary text-white dark:text-black'
+                                        : value === 'low'
+                                            ? 'border-secondary bg-secondary'
+                                            : 'border-green-300 bg-green-300 dark:border-green-600 dark:bg-green-600'
+                    }`}
                 onClick={() => setOpen(!open)}
             >
                 <span className="text-xs">
@@ -379,7 +377,7 @@ export function ToDo() {
                             localDate.setDate(localDate.getDate());
                             localDate.setMinutes(
                                 localDate.getMinutes() -
-                                    localDate.getTimezoneOffset()
+                                localDate.getTimezoneOffset()
                             );
                             updatedTask.dueDate = localDate
                                 .toISOString()
@@ -679,7 +677,7 @@ export function ToDo() {
     };
 
     return (
-        <div className="flex flex-col lg:flex-row h-screen w-full">
+        <div className="flex flex-col xl:flex-row h-screen w-full">
             <div className="pt-8 py-4 pl-8">
                 <Button
                     size="sm"
@@ -690,7 +688,7 @@ export function ToDo() {
                 </Button>
             </div>
             {showLists && (
-                <div className="w-full pt-4 px-8 lg:w-[440px] lg:pt-6">
+                <div className="w-full pt-4 px-8 xl:w-[440px] lg:pt-6">
                     <div className="flex items-center justify-between mb-4">
                         <h2 className="text-lg font-bold flex-1 mr-2">
                             To-Do Lists
@@ -754,9 +752,9 @@ export function ToDo() {
                                                     prevLists.map((prevList) =>
                                                         prevList.id === list.id
                                                             ? {
-                                                                  ...prevList,
-                                                                  name: updatedName,
-                                                              }
+                                                                ...prevList,
+                                                                name: updatedName,
+                                                            }
                                                             : prevList
                                                     )
                                                 );
@@ -767,9 +765,9 @@ export function ToDo() {
                                                         (prevList) =>
                                                             prevList
                                                                 ? {
-                                                                      ...prevList,
-                                                                      name: updatedName,
-                                                                  }
+                                                                    ...prevList,
+                                                                    name: updatedName,
+                                                                }
                                                                 : prevList
                                                     );
                                                 }
@@ -991,8 +989,8 @@ export function ToDo() {
                                                         ? 'destructive'
                                                         : task.priority ===
                                                             'medium'
-                                                          ? 'default'
-                                                          : 'secondary'
+                                                            ? 'default'
+                                                            : 'secondary'
                                                 }
                                             >
                                                 {task.priority}
@@ -1032,18 +1030,17 @@ export function ToDo() {
                                             />
                                         ) : (
                                             <span
-                                                className={`text-xs rounded p-1 dark:font-semibold ${
-                                                    task.progress ===
-                                                    'not started'
+                                                className={`text-xs rounded p-1 dark:font-semibold ${task.progress ===
+                                                        'not started'
                                                         ? 'border-gray-300'
                                                         : task.progress ===
                                                             'in progress'
-                                                          ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
-                                                          : task.progress ===
-                                                              'ready for testing'
-                                                            ? 'border-blue-300 bg-blue-300 dark:border-blue-600 dark:bg-blue-600'
-                                                            : 'border-green-300 bg-green-300 dark:border-green-600 dark:bg-green-600'
-                                                }`}
+                                                            ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
+                                                            : task.progress ===
+                                                                'ready for testing'
+                                                                ? 'border-blue-300 bg-blue-300 dark:border-blue-600 dark:bg-blue-600'
+                                                                : 'border-green-300 bg-green-300 dark:border-green-600 dark:bg-green-600'
+                                                    }`}
                                             >
                                                 {task.progress}
                                             </span>
@@ -1211,8 +1208,8 @@ export function ToDo() {
                                                         ? 'destructive'
                                                         : task.priority ===
                                                             'medium'
-                                                          ? 'default'
-                                                          : 'secondary'
+                                                            ? 'default'
+                                                            : 'secondary'
                                                 }
                                             >
                                                 {task.priority}
@@ -1256,18 +1253,17 @@ export function ToDo() {
                                             />
                                         ) : (
                                             <span
-                                                className={`text-xs rounded p-1 dark:font-semibold ${
-                                                    task.progress ===
-                                                    'not started'
+                                                className={`text-xs rounded p-1 dark:font-semibold ${task.progress ===
+                                                        'not started'
                                                         ? 'border-gray-300'
                                                         : task.progress ===
                                                             'in progress'
-                                                          ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
-                                                          : task.progress ===
-                                                              'ready for testing'
-                                                            ? 'border-blue-300 bg-blue-300 dark:border-blue-600 dark:bg-blue-600'
-                                                            : 'border-green-300 bg-green-300 dark:border-green-600 dark:bg-green-600'
-                                                }`}
+                                                            ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
+                                                            : task.progress ===
+                                                                'ready for testing'
+                                                                ? 'border-blue-300 bg-blue-300 dark:border-blue-600 dark:bg-blue-600'
+                                                                : 'border-green-300 bg-green-300 dark:border-green-600 dark:bg-green-600'
+                                                    }`}
                                             >
                                                 {task.progress}
                                             </span>
@@ -1323,11 +1319,11 @@ export function ToDo() {
                                                     Due:{' '}
                                                     {task.dueDate
                                                         ? format(
-                                                              new Date(
-                                                                  task.dueDate
-                                                              ),
-                                                              'MMM d, yyyy'
-                                                          )
+                                                            new Date(
+                                                                task.dueDate
+                                                            ),
+                                                            'MMM d, yyyy'
+                                                        )
                                                         : 'No due date'}
                                                 </span>
                                             </div>
@@ -1379,42 +1375,40 @@ export function ToDo() {
                                     <div className="flex items-center gap-2 mt-2">
                                         <ActivityIcon className="w-4 h-4" />
                                         <div
-                                            className={`w-full bg-muted rounded-full h-2 ${
-                                                editMode[task.id] &&
-                                                task.progress !==
+                                            className={`w-full bg-muted rounded-full h-2 ${editMode[task.id] &&
+                                                    task.progress !==
                                                     'not started' &&
-                                                task.progress !== 'finished'
+                                                    task.progress !== 'finished'
                                                     ? 'cursor-pointer'
                                                     : ''
-                                            }`}
+                                                }`}
                                             onMouseDown={(e) =>
                                                 editMode[task.id] &&
-                                                task.progress !==
+                                                    task.progress !==
                                                     'not started' &&
-                                                task.progress !== 'finished'
+                                                    task.progress !== 'finished'
                                                     ? handleProgressBarMouseDown(
-                                                          task.id,
-                                                          e
-                                                      )
+                                                        task.id,
+                                                        e
+                                                    )
                                                     : null
                                             }
                                             onClick={(e) =>
                                                 editMode[task.id] &&
-                                                task.progress !==
+                                                    task.progress !==
                                                     'not started' &&
-                                                task.progress !== 'finished'
+                                                    task.progress !== 'finished'
                                                     ? updateProgress(task.id, e)
                                                     : null
                                             }
                                         >
                                             <div
-                                                className={`bg-primary rounded-full h-2 ${
-                                                    task.progress ===
+                                                className={`bg-primary rounded-full h-2 ${task.progress ===
                                                         'not started' ||
-                                                    task.progress === 'finished'
+                                                        task.progress === 'finished'
                                                         ? 'pointer-events-none'
                                                         : 'pointer-events-auto'
-                                                }`}
+                                                    }`}
                                                 style={{
                                                     width: `${task.progressPercentage}%`,
                                                 }}
