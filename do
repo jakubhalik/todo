@@ -59,3 +59,28 @@ I need the generating of template lists to also post those to the mockapi
 Even tho a put request is being sent on every little change on the title input do not let that affect the smoothness of the ux of writting in that input, what is now happening is that when I text in there quickly the letters are slow and sometimes the new ones I write do not appear because the old ones do
 
 But now me texting in there does not send the put requests anymore and when I switch from the edit mode I am back to the text that was there before. I want the state of what title text I am changing there to be instantly affecting sending put requests but for the data from the endpoints to not be whatsoever effecting the states of my fields when in edit mode.
+
+The title input behavior is good one, make the one for description and tags the same.
+
+make the doing a change on the progress bar do a put request
+
+let me also drag in the progress bar
+
+implement for the progress bar state changing the same state handling where state effects the put requests but the endpoints do not whatsoever effect the state of the progress bar when in edit mode like it is in tags, description, title -> If the user does not behave like a retard it works very well, if brute testing dragging, redragging and immediately realoding after bunch of fast click and drags, it might not make the last put request in time
+
+Deleting a task does not work right now, fix it
+
+The date picker is right now choosing the previous day when clicking on a day, fix it
+
+set the endpoint as env var
+
+Leave the edit mode when clicking enter when in title input, description input, tag input or datepicker
+
+Let me write spaces when in the input for tags
+
+Add a bin icon button for deleting a list next to the edit list icon button on its right and add the functionality to delete a list through clicking on it
+
+Add a delete all tasks button for deleting all tasks in the selected list
+
+Add a delete all lists button for deleting all lists
+

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -41,21 +41,23 @@ const CustomSelect: React.FC<{
         <div className="relative inline-block w-full pl-3">
             <button
                 type="button"
-                className={`border border-rounded rounded p-1 w-full min-w-[${value === 'ready for testing' ? '150' : '75'
-                    }px] flex justify-between items-center ${value === 'not started'
+                className={`border border-rounded rounded p-1 w-full min-w-[${
+                    value === 'ready for testing' ? '150' : '75'
+                }px] flex justify-between items-center ${
+                    value === 'not started'
                         ? 'border-gray-300'
                         : value === 'in progress'
-                            ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
-                            : value === 'ready for testing'
-                                ? 'border-blue-300 bg-blue-300 dark:border-blue-600 dark:bg-blue-600'
-                                : value === 'high'
-                                    ? 'border-destructive bg-destructive'
-                                    : value === 'medium'
-                                        ? 'border-primary bg-primary text-white dark:text-black'
-                                        : value === 'low'
-                                            ? 'border-secondary bg-secondary'
-                                            : 'border-green-300 bg-green-300 dark:border-green-600 dark:bg-green-600'
-                    }`}
+                          ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
+                          : value === 'ready for testing'
+                            ? 'border-blue-300 bg-blue-300 dark:border-blue-600 dark:bg-blue-600'
+                            : value === 'high'
+                              ? 'border-destructive bg-destructive'
+                              : value === 'medium'
+                                ? 'border-primary bg-primary text-white dark:text-black'
+                                : value === 'low'
+                                  ? 'border-secondary bg-secondary'
+                                  : 'border-green-300 bg-green-300 dark:border-green-600 dark:bg-green-600'
+                }`}
                 onClick={() => setOpen(!open)}
             >
                 <span className="text-xs">
@@ -99,6 +101,43 @@ const CustomSelect: React.FC<{
 
 export function ToDo() {
     const [lists, setLists] = useState<List[]>([]);
+
+    const [currentList, setCurrentList] = useState<List | null>(null);
+
+    const [listEditMode, setListEditMode] = useState<{
+        [key: string]: boolean;
+    }>({});
+
+    const [newTask, setNewTask] = useState<Partial<Task>>({
+        title: '',
+        description: '',
+        priority: 'low',
+        dueDate: '',
+        tags: [],
+        progress: 'not started',
+        progressPercentage: 0,
+        completed: false,
+    });
+
+    const [editMode, setEditMode] = useState<{ [key: string]: boolean }>({});
+
+    const [editTitle, setEditTitle] = useState<{ [key: string]: string }>({});
+
+    const [editDescription, setEditDescription] = useState<{
+        [key: string]: string;
+    }>({});
+
+    const [editTags, setEditTags] = useState<{ [key: string]: string[] }>({});
+
+    const [isDragging, setIsDragging] = useState(false);
+
+    const [currentDraggingTaskId, setCurrentDraggingTaskId] = useState<
+        string | null
+    >(null);
+
+    const progressBarRef = useRef<HTMLDivElement | null>(null);
+
+    const endpointLists = process.env.NEXT_PUBLIC_ENDPOINT_LISTS as string;
 
     const handleGenerateTemplateLists = async () => {
         const newLists: List[] = [
@@ -172,12 +211,7 @@ export function ToDo() {
         ];
         try {
             const responses = await Promise.all(
-                newLists.map((list) =>
-                    axios.post(
-                        'https://66a56fe15dc27a3c190b7aeb.mockapi.io/api/lists',
-                        list
-                    )
-                )
+                newLists.map((list) => axios.post(endpointLists, list))
             );
             const createdLists = responses.map((response) => response.data);
             setLists(createdLists);
@@ -189,7 +223,7 @@ export function ToDo() {
 
     useEffect(() => {
         axios
-            .get('https://66a56fe15dc27a3c190b7aeb.mockapi.io/api/lists')
+            .get(endpointLists)
             .then((response) => {
                 setLists(response.data);
                 console.log('useEffect setting lists');
@@ -201,26 +235,7 @@ export function ToDo() {
             .catch((error) => {
                 console.error('Error fetching lists:', error);
             });
-    }, []);
-
-    const [currentList, setCurrentList] = useState<List | null>(null);
-
-    const [listEditMode, setListEditMode] = useState<{
-        [key: string]: boolean;
-    }>({});
-
-    const [newTask, setNewTask] = useState<Partial<Task>>({
-        title: '',
-        description: '',
-        priority: 'low',
-        dueDate: '',
-        tags: [],
-        progress: 'not started',
-        progressPercentage: 0,
-        completed: false,
-    });
-
-    const [editMode, setEditMode] = useState<{ [key: string]: boolean }>({});
+    }, [endpointLists]);
 
     const handleAddTask = () => {
         if (newTask.title?.trim() !== '') {
@@ -271,9 +286,25 @@ export function ToDo() {
 
     const handleEditTask = (taskId: string, updatedTask: Partial<Task>) => {
         setCurrentList((prevList) => {
-            const updatedTasks = (prevList as List).tasks.map((task) =>
-                task.id === taskId ? { ...task, ...updatedTask } : task
-            );
+            const updatedTasks = (prevList as List).tasks.map((task) => {
+                if (task.id === taskId) {
+                    if (updatedTask.dueDate) {
+                        const localDate = new Date(updatedTask.dueDate);
+                        if (!isNaN(localDate.getTime())) {
+                            localDate.setDate(localDate.getDate());
+                            localDate.setMinutes(
+                                localDate.getMinutes() -
+                                    localDate.getTimezoneOffset()
+                            );
+                            updatedTask.dueDate = localDate
+                                .toISOString()
+                                .split('T')[0];
+                        }
+                    }
+                    return { ...task, ...updatedTask };
+                }
+                return task;
+            });
             const updatedList = { ...(prevList as List), tasks: updatedTasks };
 
             handleEditTaskDebounced((prevList as List).id, updatedList);
@@ -283,21 +314,33 @@ export function ToDo() {
     };
 
     const handleDeleteTask = (taskId: string) => {
-        axios
-            .delete(
-                `https://66a56fe15dc27a3c190b7aeb.mockapi.io/api/lists/${currentList?.id}/tasks/${taskId}`
-            )
-            .then(() => {
-                setCurrentList((prevList) => ({
-                    ...(prevList as List),
-                    tasks: (prevList as List).tasks.filter(
-                        (task) => task.id !== taskId
-                    ),
-                }));
-            })
-            .catch((error) => {
-                console.error('Error deleting task:', error);
-            });
+        setCurrentList((prevList) => {
+            if (!prevList) return prevList;
+
+            const updatedTasks = prevList.tasks.filter(
+                (task) => task.id !== taskId
+            );
+            const updatedList = { ...prevList, tasks: updatedTasks };
+
+            axios
+                .put(
+                    `https://66a56fe15dc27a3c190b7aeb.mockapi.io/api/lists/${prevList.id}`,
+                    updatedList
+                )
+                .then(() => {
+                    setLists((prevLists) =>
+                        prevLists.map((list) =>
+                            list.id === prevList.id ? updatedList : list
+                        )
+                    );
+                    console.log('Task deleted successfully');
+                })
+                .catch((error) => {
+                    console.error('Error deleting task:', error);
+                });
+
+            return updatedList;
+        });
     };
 
     const handleToggleTaskCompletion = (taskId: string) => {
@@ -345,17 +388,34 @@ export function ToDo() {
         }));
     };
 
-    const handleProgressBarClick = (
+    const handleProgressBarMouseDown = (
         taskId: string,
         e: React.MouseEvent<HTMLDivElement, MouseEvent>
     ) => {
-        const bar = e.currentTarget;
+        setIsDragging(true);
+        setCurrentDraggingTaskId(taskId);
+        progressBarRef.current = e.currentTarget as HTMLDivElement;
+        updateProgress(taskId, e);
+    };
+
+    const handleProgressBarMouseUp = () => {
+        setIsDragging(false);
+        setCurrentDraggingTaskId(null);
+    };
+
+    const updateProgress = (
+        taskId: string,
+        e: MouseEvent | React.MouseEvent<HTMLDivElement, MouseEvent>
+    ) => {
+        const bar = progressBarRef.current;
+        if (!bar) return;
+
         const rect = bar.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
         const newProgressPercentage = Math.floor((clickX / rect.width) * 100);
-        setCurrentList((prevList) => ({
-            ...(prevList as List),
-            tasks: (prevList as List).tasks.map((task) => {
+
+        setCurrentList((prevList) => {
+            const updatedTasks = (prevList as List).tasks.map((task) => {
                 if (
                     task.id === taskId &&
                     task.progress !== 'not started' &&
@@ -367,20 +427,74 @@ export function ToDo() {
                     };
                 }
                 return task;
-            }),
-        }));
+            });
+
+            const updatedList = { ...(prevList as List), tasks: updatedTasks };
+
+            axios
+                .put(
+                    `https://66a56fe15dc27a3c190b7aeb.mockapi.io/api/lists/${(prevList as List).id}`,
+                    updatedList
+                )
+                .catch((error) => {
+                    console.error('Error updating task progress:', error);
+                });
+            console.log('Put a change in progressPercentage.');
+            return updatedList;
+        });
     };
 
-    const [editTitle, setEditTitle] = useState<{ [key: string]: string }>({});
+    useEffect(() => {
+        const handleMouseUp = () => handleProgressBarMouseUp();
 
-    const handleEditIconClick = (taskId: string, title: string) => {
+        const handleMouseMove = (e: MouseEvent) => {
+            if (isDragging && currentDraggingTaskId) {
+                updateProgress(currentDraggingTaskId, e);
+            }
+        };
+
+        if (isDragging) {
+            window.addEventListener('mousemove', handleMouseMove);
+            window.addEventListener('mouseup', handleMouseUp);
+        } else {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        }
+
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [isDragging, currentDraggingTaskId]);
+
+    const handleEditIconClick = (
+        taskId: string,
+        title: string,
+        description: string,
+        tags: string[]
+    ) => {
         setEditTitle((prev) => ({ ...prev, [taskId]: title }));
+        setEditDescription((prev) => ({ ...prev, [taskId]: description }));
+        setEditTags((prev) => ({ ...prev, [taskId]: tags }));
         setEditMode((prev) => ({ ...prev, [taskId]: !prev[taskId] }));
     };
 
     const handleTitleChange = (taskId: string, newTitle: string) => {
         setEditTitle((prev) => ({ ...prev, [taskId]: newTitle }));
         handleEditTask(taskId, { title: newTitle });
+    };
+
+    const handleDescriptionChange = (
+        taskId: string,
+        newDescription: string
+    ) => {
+        setEditDescription((prev) => ({ ...prev, [taskId]: newDescription }));
+        handleEditTask(taskId, { description: newDescription });
+    };
+
+    const handleTagsChange = (taskId: string, newTags: string[]) => {
+        setEditTags((prev) => ({ ...prev, [taskId]: newTags }));
+        handleEditTask(taskId, { tags: newTags });
     };
 
     const handleAddList = () => {
@@ -390,10 +504,7 @@ export function ToDo() {
             tasks: [],
         };
         axios
-            .post(
-                'https://66a56fe15dc27a3c190b7aeb.mockapi.io/api/lists',
-                newList
-            )
+            .post(endpointLists, newList)
             .then((response) => {
                 setLists([...lists, response.data]);
                 setCurrentList(response.data);
@@ -436,10 +547,10 @@ export function ToDo() {
                                                 prevLists.map((prevList) =>
                                                     prevList.id === list.id
                                                         ? {
-                                                            ...prevList,
-                                                            name: e.target
-                                                                .value,
-                                                        }
+                                                              ...prevList,
+                                                              name: e.target
+                                                                  .value,
+                                                          }
                                                         : prevList
                                                 )
                                             )
@@ -598,8 +709,8 @@ export function ToDo() {
                                                         ? 'destructive'
                                                         : task.priority ===
                                                             'medium'
-                                                            ? 'default'
-                                                            : 'secondary'
+                                                          ? 'default'
+                                                          : 'secondary'
                                                 }
                                             >
                                                 {task.priority}
@@ -639,29 +750,44 @@ export function ToDo() {
                                             />
                                         ) : (
                                             <span
-                                                className={`text-xs rounded p-1 dark:font-semibold ${task.progress ===
+                                                className={`text-xs rounded p-1 dark:font-semibold ${
+                                                    task.progress ===
                                                     'not started'
-                                                    ? 'border-gray-300'
-                                                    : task.progress ===
-                                                        'in progress'
-                                                        ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
+                                                        ? 'border-gray-300'
                                                         : task.progress ===
-                                                            'ready for testing'
+                                                            'in progress'
+                                                          ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
+                                                          : task.progress ===
+                                                              'ready for testing'
                                                             ? 'border-blue-300 bg-blue-300 dark:border-blue-600 dark:bg-blue-600'
                                                             : 'border-green-300 bg-green-300 dark:border-green-600 dark:bg-green-600'
-                                                    }`}
+                                                }`}
                                             >
                                                 {task.progress}
                                             </span>
                                         )}
+
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className={editMode[task.id] ? 'bg-gray-200 dark:bg-gray-900 p-2' : ''}
-                                            onClick={() => handleEditIconClick(task.id, task.title)}
+                                            className={
+                                                editMode[task.id]
+                                                    ? 'bg-gray-200 dark:bg-gray-900 p-2'
+                                                    : ''
+                                            }
+                                            onClick={() =>
+                                                handleEditIconClick(
+                                                    task.id,
+                                                    task.title,
+                                                    task.description,
+                                                    task.tags
+                                                )
+                                            }
                                         >
                                             <FilePenIcon className="w-4 h-4" />
-                                            <span className="sr-only">Edit task</span>
+                                            <span className="sr-only">
+                                                Edit task
+                                            </span>
                                         </Button>
                                         <Button
                                             variant="ghost"
@@ -724,7 +850,9 @@ export function ToDo() {
                                             onClick={() =>
                                                 handleEditIconClick(
                                                     task.id,
-                                                    task.title
+                                                    task.title,
+                                                    task.description,
+                                                    task.tags
                                                 )
                                             }
                                         >
@@ -784,8 +912,8 @@ export function ToDo() {
                                                         ? 'destructive'
                                                         : task.priority ===
                                                             'medium'
-                                                            ? 'default'
-                                                            : 'secondary'
+                                                          ? 'default'
+                                                          : 'secondary'
                                                 }
                                             >
                                                 {task.priority}
@@ -829,17 +957,18 @@ export function ToDo() {
                                             />
                                         ) : (
                                             <span
-                                                className={`text-xs rounded p-1 dark:font-semibold ${task.progress ===
+                                                className={`text-xs rounded p-1 dark:font-semibold ${
+                                                    task.progress ===
                                                     'not started'
-                                                    ? 'border-gray-300'
-                                                    : task.progress ===
-                                                        'in progress'
-                                                        ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
+                                                        ? 'border-gray-300'
                                                         : task.progress ===
-                                                            'ready for testing'
+                                                            'in progress'
+                                                          ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
+                                                          : task.progress ===
+                                                              'ready for testing'
                                                             ? 'border-blue-300 bg-blue-300 dark:border-blue-600 dark:bg-blue-600'
                                                             : 'border-green-300 bg-green-300 dark:border-green-600 dark:bg-green-600'
-                                                    }`}
+                                                }`}
                                             >
                                                 {task.progress}
                                             </span>
@@ -850,11 +979,15 @@ export function ToDo() {
                                 <div className="mt-2 text-muted-foreground">
                                     {editMode[task.id] ? (
                                         <Input
-                                            value={task.description}
+                                            value={
+                                                editDescription[task.id] ||
+                                                task.description
+                                            }
                                             onChange={(e) =>
-                                                handleEditTask(task.id, {
-                                                    description: e.target.value,
-                                                })
+                                                handleDescriptionChange(
+                                                    task.id,
+                                                    e.target.value
+                                                )
                                             }
                                             className="w-full"
                                         />
@@ -882,11 +1015,11 @@ export function ToDo() {
                                                     Due:{' '}
                                                     {task.dueDate
                                                         ? format(
-                                                            new Date(
-                                                                task.dueDate
-                                                            ),
-                                                            'MMM d, yyyy'
-                                                        )
+                                                              new Date(
+                                                                  task.dueDate
+                                                              ),
+                                                              'MMM d, yyyy'
+                                                          )
                                                         : 'No due date'}
                                                 </span>
                                             </div>
@@ -897,15 +1030,20 @@ export function ToDo() {
                                         <TagIcon className="w-4 h-4" />
                                         {editMode[task.id] ? (
                                             <Input
-                                                value={task.tags.join(', ')}
+                                                value={
+                                                    editTags[task.id]?.join(
+                                                        ', '
+                                                    ) || task.tags.join(', ')
+                                                }
                                                 onChange={(e) =>
-                                                    handleEditTask(task.id, {
-                                                        tags: e.target.value
+                                                    handleTagsChange(
+                                                        task.id,
+                                                        e.target.value
                                                             .split(',')
                                                             .map((tag) =>
                                                                 tag.trim()
-                                                            ),
-                                                    })
+                                                            )
+                                                    )
                                                 }
                                                 className="w-full"
                                             />
@@ -926,32 +1064,42 @@ export function ToDo() {
                                     <div className="flex items-center gap-2 mt-2">
                                         <ActivityIcon className="w-4 h-4" />
                                         <div
-                                            className={`w-full bg-muted rounded-full h-2 ${editMode[task.id] &&
+                                            className={`w-full bg-muted rounded-full h-2 ${
+                                                editMode[task.id] &&
                                                 task.progress !==
-                                                'not started' &&
+                                                    'not started' &&
                                                 task.progress !== 'finished'
-                                                ? 'cursor-pointer'
-                                                : ''
-                                                }`}
+                                                    ? 'cursor-pointer'
+                                                    : ''
+                                            }`}
+                                            onMouseDown={(e) =>
+                                                editMode[task.id] &&
+                                                task.progress !==
+                                                    'not started' &&
+                                                task.progress !== 'finished'
+                                                    ? handleProgressBarMouseDown(
+                                                          task.id,
+                                                          e
+                                                      )
+                                                    : null
+                                            }
                                             onClick={(e) =>
                                                 editMode[task.id] &&
-                                                    task.progress !==
+                                                task.progress !==
                                                     'not started' &&
-                                                    task.progress !== 'finished'
-                                                    ? handleProgressBarClick(
-                                                        task.id,
-                                                        e
-                                                    )
+                                                task.progress !== 'finished'
+                                                    ? updateProgress(task.id, e)
                                                     : null
                                             }
                                         >
                                             <div
-                                                className={`bg-primary rounded-full h-2 ${task.progress ===
-                                                    'not started' ||
+                                                className={`bg-primary rounded-full h-2 ${
+                                                    task.progress ===
+                                                        'not started' ||
                                                     task.progress === 'finished'
-                                                    ? 'pointer-events-none'
-                                                    : 'pointer-events-auto'
-                                                    }`}
+                                                        ? 'pointer-events-none'
+                                                        : 'pointer-events-auto'
+                                                }`}
                                                 style={{
                                                     width: `${task.progressPercentage}%`,
                                                 }}

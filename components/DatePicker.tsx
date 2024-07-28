@@ -61,7 +61,15 @@ export function DatePickerWithPresets({
                     <Calendar
                         mode="single"
                         selected={date}
-                        onSelect={onChange}
+                        onSelect={(selectedDate) => {
+                            if (selectedDate) {
+                                selectedDate.setMinutes(
+                                    selectedDate.getMinutes() -
+                                        selectedDate.getTimezoneOffset()
+                                );
+                            }
+                            onChange(selectedDate || undefined);
+                        }}
                     />
                 </div>
             </PopoverContent>
