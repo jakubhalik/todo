@@ -282,7 +282,12 @@ export function ToDo() {
             axios
                 .put(`${endpointLists}/${currentList?.id}`, updatedList)
                 .then((response) => {
-                    setCurrentList(updatedList as List);
+                    setCurrentList(response.data);
+                    setLists((prevLists) =>
+                        prevLists.map((list) =>
+                            list.id === currentList?.id ? response.data : list
+                        )
+                    );
                     setNewTask({
                         title: '',
                         description: '',
@@ -307,8 +312,15 @@ export function ToDo() {
     const handleEditTaskDebounced = debounce((listId, updatedList) => {
         axios
             .put(`${endpointLists}/${listId}`, updatedList)
-            .then(() => {
-                setCurrentList(updatedList);
+            .then((response) => {
+                setLists((prevLists) =>
+                    prevLists.map((list) =>
+                        list.id === listId ? response.data : list
+                    )
+                );
+                if (currentList?.id === listId) {
+                    setCurrentList(response.data);
+                }
             })
             .catch((error) => {
                 console.error('Error updating task:', error);
@@ -342,6 +354,12 @@ export function ToDo() {
             const updatedList = { ...(prevList as List), tasks: updatedTasks };
 
             handleEditTaskDebounced((prevList as List).id, updatedList);
+
+            setLists((prevLists) =>
+                prevLists.map((list) =>
+                    list.id === (prevList as List).id ? updatedList : list
+                )
+            );
 
             return updatedList;
         });
