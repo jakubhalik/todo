@@ -1063,11 +1063,9 @@ export function ToDo() {
                                                 onChange={(e) =>
                                                     handleTagsChange(
                                                         task.id,
-                                                        e.target.value
-                                                            .split(',')
-                                                            .map((tag) =>
-                                                                tag.trim()
-                                                            )
+                                                        e.target.value.split(
+                                                            ','
+                                                        )
                                                     )
                                                 }
                                                 onKeyDown={(e) => {

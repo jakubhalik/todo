@@ -93,6 +93,8 @@ optimalize cards responsiveness for galaxy z fold 5 (344 px width)
 
 Let me write spaces when in the input for tags
 
+adding task does not work right now, fix adding task
+
 Add a bin icon button for deleting a list next to the edit list icon button on its right and add the functionality to delete a list through clicking on it
 
 Add a delete all tasks button for deleting all tasks in the selected list
