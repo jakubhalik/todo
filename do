@@ -127,9 +127,9 @@ Allright, good, but editing the list name does right now not do a valid put requ
 
 When I make changes in tasks in one list and then switch to a different one and back the changes will disappear unless I do a full page reload, fix that
 
-all till here done
-
 Great, but it right now still does not work for adding new tasks, change that up
+
+all till here done
 
 make the Add Task button clickable only when there is some input in the New Task input
 
