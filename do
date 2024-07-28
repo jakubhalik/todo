@@ -84,7 +84,10 @@ onKeyDown={(e) => {
 
 do not let the progress bar be dragged below 0% or above 100%
 
-let me see the cursor of where I am writing in the popup for inputs
+make the popup input span over more of a height when it has too much text so the user could always see all of it
+
+do not write hardcoded 1 in rows={}, instead have it as rows={rows} , have no style.height anywhere, that is disgusting and shameful and stupid, not needed at all, have a state that is at initial load of popup and then onInput writing checking the amount of words in symbols (letter, number, special symbol, space, whatev) and for each 35 adds one row to the initial one row,
+the amount of rows is always just one, at 0 symbols it is supposed to be 1 row, and for each 35 symbols +1 row, where it is supposed to check on me inputting more things and recalculate if it is not supposed to get more rows again
 
 Let me write spaces when in the input for tags
 
