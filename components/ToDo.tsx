@@ -810,7 +810,10 @@ export function ToDo() {
                                 }
                                 className="bg-muted/50 border-none focus:ring-0"
                             />
-                            <Button onClick={handleAddTask}>
+                            <Button
+                                onClick={handleAddTask}
+                                disabled={!newTask.title?.trim()}
+                            >
                                 <PlusIcon className="w-4 h-4 mr-2" />
                                 Add Task
                             </Button>

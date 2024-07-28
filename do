@@ -129,9 +129,9 @@ When I make changes in tasks in one list and then switch to a different one and 
 
 Great, but it right now still does not work for adding new tasks, change that up
 
-all till here done
-
 make the Add Task button clickable only when there is some input in the New Task input
+
+all till here done
 
 add a Button for hiding or displaying the To-Do Lists section
 
