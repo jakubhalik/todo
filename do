@@ -119,9 +119,11 @@ Add a delete all lists button for deleting all lists
 
 Integrate all deletions in the ToDo for the use of the deleteConfirmationPopup
 
+do not allow to give a list name that is longer than 15 characters
+
 all till here done
 
-do not allow to give a list name that is longer than 15 characters
+change the title of the list according to the new name of the list right after the new name is set
 
 add a Button for hiding or displaying the To-Do Lists section
 

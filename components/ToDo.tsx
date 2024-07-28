@@ -531,7 +531,7 @@ export function ToDo() {
     const handleAddList = async () => {
         const newList = {
             id: nanoid(),
-            name: 'New List',
+            name: 'New List'.slice(0, 15),
             tasks: [],
         };
         axios
@@ -649,7 +649,7 @@ export function ToDo() {
                             >
                                 {listEditMode[list.id] ? (
                                     <Input
-                                        value={list.name}
+                                        value={list.name.slice(0, 15)}
                                         onChange={(e) =>
                                             setLists((prevLists) =>
                                                 prevLists.map((prevList) =>
