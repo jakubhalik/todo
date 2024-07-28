@@ -115,10 +115,14 @@ make the buttons of the dialog smaller and the yes button bg-red-300
 
 build -> if type errs -> fix type errs -> back to BOL until type errs fixed
 
-all till here done
-
 Add a delete all lists button for deleting all lists
 
+all till here done
+
+Integrate all deletions in the ToDo for the use of the deleteConfirmationPopup
+
 do not allow to give a list name that is longer than 15 characters
+
+add a Button for hiding or displaying the To-Do Lists section
 
 the Personal and Work lists both have highlighted backgrounds that is supposed to be had only by the selected list no matter what is selected and when I delete one, I delete both and when I edit name of one, I edit name of both, but it happens only on like every third or fith generating of template lists, fix that

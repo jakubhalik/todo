@@ -158,6 +158,8 @@ export function ToDo() {
 
     const [deleteAllTasksPopup, setDeleteAllTasksPopup] = useState(false);
 
+    const [deleteAllListsPopup, setDeleteAllListsPopup] = useState(false);
+
     const handleGenerateTemplateLists = async () => {
         const newLists: List[] = [
             {
@@ -256,7 +258,7 @@ export function ToDo() {
             });
     }, [endpointLists]);
 
-    const handleAddTask = () => {
+    const handleAddTask = async () => {
         if (newTask.title?.trim() !== '') {
             const newTaskWithId: Task = {
                 ...newTask,
@@ -305,7 +307,10 @@ export function ToDo() {
             });
     }, 300);
 
-    const handleEditTask = (taskId: string, updatedTask: Partial<Task>) => {
+    const handleEditTask = async (
+        taskId: string,
+        updatedTask: Partial<Task>
+    ) => {
         setCurrentList((prevList) => {
             const updatedTasks = (prevList as List).tasks.map((task) => {
                 if (task.id === taskId) {
@@ -334,7 +339,7 @@ export function ToDo() {
         });
     };
 
-    const handleDeleteTask = (taskId: string) => {
+    const handleDeleteTask = async (taskId: string) => {
         setCurrentList((prevList) => {
             if (!prevList) return prevList;
 
@@ -361,7 +366,7 @@ export function ToDo() {
         });
     };
 
-    const handleToggleTaskCompletion = (taskId: string) => {
+    const handleToggleTaskCompletion = async (taskId: string) => {
         setCurrentList((prevList) => ({
             ...(prevList as List),
             tasks: (prevList as List).tasks.map((task) =>
@@ -372,7 +377,7 @@ export function ToDo() {
         }));
     };
 
-    const handleProgressChange = (
+    const handleProgressChange = async (
         taskId: string,
         progress: Task['progress']
     ) => {
@@ -406,7 +411,7 @@ export function ToDo() {
         }));
     };
 
-    const handleProgressBarMouseDown = (
+    const handleProgressBarMouseDown = async (
         taskId: string,
         e: React.MouseEvent<HTMLDivElement, MouseEvent>
     ) => {
@@ -416,7 +421,7 @@ export function ToDo() {
         updateProgress(taskId, e);
     };
 
-    const handleProgressBarMouseUp = () => {
+    const handleProgressBarMouseUp = async () => {
         setIsDragging(false);
         setCurrentDraggingTaskId(null);
     };
@@ -485,7 +490,7 @@ export function ToDo() {
         };
     }, [isDragging, currentDraggingTaskId, updateProgress]);
 
-    const handleEditIconClick = (
+    const handleEditIconClick = async (
         taskId: string,
         title: string,
         description: string,
@@ -497,12 +502,12 @@ export function ToDo() {
         setEditMode((prev) => ({ ...prev, [taskId]: !prev[taskId] }));
     };
 
-    const handleTitleChange = (taskId: string, newTitle: string) => {
+    const handleTitleChange = async (taskId: string, newTitle: string) => {
         setEditTitle((prev) => ({ ...prev, [taskId]: newTitle }));
         handleEditTask(taskId, { title: newTitle });
     };
 
-    const handleDescriptionChange = (
+    const handleDescriptionChange = async (
         taskId: string,
         newDescription: string
     ) => {
@@ -515,7 +520,7 @@ export function ToDo() {
         handleEditTask(taskId, { tags: newTags });
     };
 
-    const handleAddList = () => {
+    const handleAddList = async () => {
         const newList = {
             id: nanoid(),
             name: 'New List',
@@ -536,7 +541,7 @@ export function ToDo() {
             });
     };
 
-    const handleDeleteList = (listId: string) => {
+    const handleDeleteList = async (listId: string) => {
         axios
             .delete(`${endpointLists}/${listId}`)
             .then(() => {
@@ -552,7 +557,7 @@ export function ToDo() {
             });
     };
 
-    const handleDeleteAllTasks = () => {
+    const handleDeleteAllTasks = async () => {
         const updatedList = { ...(currentList as List), tasks: [] };
         axios
             .put(`${endpointLists}/${currentList?.id}`, updatedList)
@@ -569,13 +574,47 @@ export function ToDo() {
         setDeleteConfirmationPopup(true);
     };
 
+    const handleDeleteAllLists = async () => {
+        try {
+            const response = await axios.get(endpointLists);
+            const listsToDelete = response.data;
+
+            await Promise.all(
+                listsToDelete.map((list: List) =>
+                    axios.delete(`${endpointLists}/${list.id}`)
+                )
+            );
+
+            setLists([]);
+            setCurrentList(null);
+            console.log('All lists deleted successfully');
+        } catch (error) {
+            console.error('Error deleting all lists:', error);
+        }
+    };
+
+    const handleDeleteAllListsPopup = async () => {
+        setDeleteAllListsPopup(true);
+        setDeleteConfirmationPopup(true);
+    };
+
     return (
         <div className="flex flex-col lg:flex-row h-screen w-full">
-            <div className="w-full pt-4 px-8 lg:w-80 lg:pt-6">
+            <div className="w-full pt-4 px-8 lg:w-[440px] lg:pt-6">
                 <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-bold">To-Do Lists</h2>
+                    <h2 className="text-lg font-bold flex-1 mr-2">
+                        To-Do Lists
+                    </h2>
+                    <Button
+                        size="sm"
+                        className="flex-1 mr-2 bg-red-300 dark:bg-transparent dark:border dark:border-red-400 dark:text-red-400"
+                        onClick={handleDeleteAllListsPopup}
+                    >
+                        <TrashIcon className="w-4 h-4 mr-2 dark:text-red-400" />
+                        Delete All Lists
+                    </Button>
                     <Button size="sm" onClick={handleAddList}>
-                        <PlusIcon className="w-4 h-4 mr-2" />
+                        <PlusIcon className="flex-1 w-4 h-4 mr-2" />
                         Add List
                     </Button>
                 </div>
@@ -1219,15 +1258,20 @@ export function ToDo() {
                     <AlertDialogContent>
                         <AlertDialogTitle>
                             <span className="flex justify-center">
-                                {`Are you sure you want to delete all ${deleteAllTasksPopup ? 'tasks' : 'links'}?`}
+                                {`Are you sure you want to delete all ${deleteAllTasksPopup ? 'tasks' : 'lists'}?`}
                             </span>
                         </AlertDialogTitle>
                         <div className="flex justify-between gap-2 px-10">
                             <AlertDialogAction
                                 className="flex-1 mr-2 py-1 bg-red-300 hover:bg-red-400 active:bg-red-500"
                                 onClick={() => {
-                                    handleDeleteAllTasks();
+                                    deleteAllTasksPopup &&
+                                        handleDeleteAllTasks();
+                                    deleteAllListsPopup &&
+                                        handleDeleteAllLists();
                                     setDeleteConfirmationPopup(false);
+                                    setDeleteAllTasksPopup(false);
+                                    setDeleteAllListsPopup(false);
                                 }}
                             >
                                 Yes
@@ -1236,6 +1280,8 @@ export function ToDo() {
                                 className="flex-1 py-1"
                                 onClick={() => {
                                     setDeleteConfirmationPopup(false);
+                                    setDeleteAllTasksPopup(false);
+                                    setDeleteAllListsPopup(false);
                                 }}
                             >
                                 No
