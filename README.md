@@ -1,5 +1,7 @@
 # Todo app for gymbeam (lol)
 
+## Version 0.1.2 - Alpha
+
 ### When using/testing the app don't forget to click the edit icon button when wanting to edit an event/task/item
 
 <br>
@@ -11,6 +13,8 @@ NEXT_PUBLIC_ENDPOINT_LISTS=https://66a56fe15dc27a3c190b7aeb.mockapi.io/api/lists
 ```
 
 but I can provide you with a private mockupapi endpoint if you privately message me.
+
+-   [Check already deployed version here](https://todo.jakubhalik.org) - I did not implement auth for this version of the app so anyone can delete any tasks/lists, or basically do anything up here on this deployed version
 
 ## Sorta "docs"|my process:
 
@@ -164,6 +168,12 @@ make it a circle
 Also put that circle there at the initial load until it was checked if there are any data on the endpoint
 
 adding new task on enter in input for adding task
+
+deployed demo on vercel
+
+set up dns records routing
+
+make switching checkbox do a put request for the completed
 
 <br>
 <br>

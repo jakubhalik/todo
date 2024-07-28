@@ -438,14 +438,33 @@ export function ToDo() {
     };
 
     const handleToggleTaskCompletion = async (taskId: string) => {
-        setCurrentList((prevList) => ({
-            ...(prevList as List),
-            tasks: (prevList as List).tasks.map((task) =>
+        setCurrentList((prevList) => {
+            const updatedTasks = (prevList as List).tasks.map((task) =>
                 task.id === taskId
                     ? { ...task, completed: !task.completed }
                     : task
-            ),
-        }));
+            );
+
+            const updatedList = { ...(prevList as List), tasks: updatedTasks };
+
+            axios
+                .put(`${endpointLists}/${(prevList as List).id}`, updatedList)
+                .then(() => {
+                    setLists((prevLists) =>
+                        prevLists.map((list) =>
+                            list.id === (prevList as List).id
+                                ? updatedList
+                                : list
+                        )
+                    );
+                    console.log('Task completion toggled successfully');
+                })
+                .catch((error) => {
+                    console.error('Error toggling task completion:', error);
+                });
+
+            return updatedList;
+        });
     };
 
     const handleProgressChange = async (

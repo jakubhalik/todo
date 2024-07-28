@@ -149,5 +149,11 @@ Also put that circle there at the initial load until it was checked if there are
 
 adding new task on enter in input for adding task
 
+deployed demo on vercel
+
+set up dns records routing
+
+make switching checkbox do a put request for the completed
+
 all till here done
 
