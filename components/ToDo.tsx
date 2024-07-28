@@ -533,9 +533,21 @@ export function ToDo() {
             });
     };
 
+    const handleDeleteAllTasks = () => {
+        const updatedList = { ...currentList, tasks: [] };
+        axios
+            .put(`${endpointLists}/${currentList?.id}`, updatedList)
+            .then(() => {
+                setCurrentList(updatedList);
+            })
+            .catch((error) => {
+                console.error('Error deleting all tasks:', error);
+            });
+    };
+
     return (
         <div className="flex flex-col lg:flex-row h-screen w-full">
-            <div className="w-full pt-4 px-8 lg:w-64 lg:pt-6">
+            <div className="w-full pt-4 px-8 lg:w-80 lg:pt-6">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-lg font-bold">To-Do Lists</h2>
                     <Button size="sm" onClick={handleAddList}>
@@ -605,8 +617,8 @@ export function ToDo() {
                                     size="icon"
                                     className={
                                         listEditMode[list.id]
-                                            ? 'bg-gray-200 dark:bg-slate-800'
-                                            : ''
+                                            ? 'bg-gray-200 dark:bg-slate-800 px-3'
+                                            : 'px-3'
                                     }
                                     onClick={() =>
                                         setListEditMode((prev) => ({
@@ -620,6 +632,7 @@ export function ToDo() {
                                 <Button
                                     variant="ghost"
                                     size="icon"
+                                    className="px-3"
                                     onClick={() => handleDeleteList(list.id)}
                                 >
                                     <TrashIcon className="w-4 h-4" />
@@ -1172,6 +1185,17 @@ export function ToDo() {
                             </Card>
                         ))}
                 </div>
+                <br />
+                {currentList && currentList.tasks.length > 0 && (
+                    <Button
+                        size="sm"
+                        className="w-full bg-red-300 dark:bg-transparent dark:border dark:border-red-400 dark:text-red-400"
+                        onClick={handleDeleteAllTasks}
+                    >
+                        <TrashIcon className="w-4 h-4 mr-2 dark:text-red-400" />
+                        Delete All Tasks
+                    </Button>
+                )}
             </div>
         </div>
     );

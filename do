@@ -101,9 +101,18 @@ add placeholder Description to description input and placeholder Tags to tags in
 
 Add a bin icon button for deleting a list next to the edit list icon button on its right and add the functionality to delete a list through clicking on it
 
+Add a delete all tasks button for deleting all tasks in the selected list
+
+I want the button down there below, I just tho want it to have just as much width as the cards above it and I want it to have a bg-red-400 and for dark: no bg and red border, red icon, red text
+
 all till here done
 
-Add a delete all tasks button for deleting all tasks in the selected list
+add a popup of 'Are you sure you want to delete all tasks'?
+
+build -> if type errs -> fix type errs -> back to BOL until type errs fixed
 
 Add a delete all lists button for deleting all lists
 
+do not allow to give a list name that is longer than 15 characters
+
+the Personal and Work lists both have highlighted backgrounds that is supposed to be had only by the selected list no matter what is selected, fix that
