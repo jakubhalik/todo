@@ -693,18 +693,40 @@ export function ToDo() {
                         <h2 className="text-lg font-bold flex-1 mr-2">
                             To-Do Lists
                         </h2>
-                        <Button
-                            size="sm"
-                            className="flex-1 mr-2 bg-red-500 hover:bg-red-600 active:bg-red-700 dark:bg-transparent dark:border dark:border-red-400 dark:hover:border-red-500 dark:active:border-red-600 dark:text-red-400 dark:hover:text-red-500 dark:active:text-red-600"
-                            onClick={handleDeleteAllListsPopup}
-                        >
-                            <TrashIcon className="w-4 h-4 mr-2 dark:text-red-400 dark:hover:text-red-500 dark:active:text-red-600" />
-                            Delete All Lists
-                        </Button>
-                        <Button size="sm" onClick={handleAddList}>
-                            <PlusIcon className="flex-1 w-4 h-4 mr-2" />
-                            Add List
-                        </Button>
+                        {innerWidth >= 440 && (
+                            <>
+                                <Button
+                                    size="sm"
+                                    className="flex-1 mr-2 bg-red-500 hover:bg-red-600 active:bg-red-700 dark:bg-transparent dark:border dark:border-red-400 dark:hover:border-red-500 dark:active:border-red-600 dark:text-red-400 dark:hover:text-red-500 dark:active:text-red-600"
+                                    onClick={handleDeleteAllListsPopup}
+                                >
+                                    <TrashIcon className="w-4 h-4 mr-2 dark:text-red-400 dark:hover:text-red-500 dark:active:text-red-600" />
+                                    Delete All Lists
+                                </Button>
+                                <Button size="sm" onClick={handleAddList}>
+                                    <PlusIcon className="flex-1 w-4 h-4 mr-2" />
+                                    Add List
+                                </Button>
+                            </>
+                        )}
+                    </div>
+                    <div className="flex items-center justify-between mb-4">
+                        {innerWidth < 440 && (
+                            <>
+                                <Button
+                                    size="sm"
+                                    className="flex-1 mr-2 bg-red-500 hover:bg-red-600 active:bg-red-700 dark:bg-transparent dark:border dark:border-red-400 dark:hover:border-red-500 dark:active:border-red-600 dark:text-red-400 dark:hover:text-red-500 dark:active:text-red-600"
+                                    onClick={handleDeleteAllListsPopup}
+                                >
+                                    <TrashIcon className="w-4 h-4 mr-2 dark:text-red-400 dark:hover:text-red-500 dark:active:text-red-600" />
+                                    Delete All Lists
+                                </Button>
+                                <Button size="sm" onClick={handleAddList}>
+                                    <PlusIcon className="flex-1 w-4 h-4 mr-2" />
+                                    Add List
+                                </Button>
+                            </>
+                        )}
                     </div>
                     {lists.length === 0 ? (
                         isLoading || isGeneratingTemplates ? (
@@ -891,6 +913,11 @@ export function ToDo() {
                                         title: e.target.value,
                                     })
                                 }
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handleAddTask();
+                                    }
+                                }}
                                 className="bg-muted/50 border-none focus:ring-0"
                             />
                             <Button
