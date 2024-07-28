@@ -517,6 +517,22 @@ export function ToDo() {
             });
     };
 
+    const handleDeleteList = (listId: string) => {
+        axios
+            .delete(`${endpointLists}/${listId}`)
+            .then(() => {
+                setLists((prevLists) =>
+                    prevLists.filter((list) => list.id !== listId)
+                );
+                if (currentList?.id === listId) {
+                    setCurrentList(null);
+                }
+            })
+            .catch((error) => {
+                console.error('Error deleting list:', error);
+            });
+    };
+
     return (
         <div className="flex flex-col lg:flex-row h-screen w-full">
             <div className="w-full pt-4 px-8 lg:w-64 lg:pt-6">
@@ -600,6 +616,13 @@ export function ToDo() {
                                     }
                                 >
                                     <FilePenIcon className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleDeleteList(list.id)}
+                                >
+                                    <TrashIcon className="w-4 h-4" />
                                 </Button>
                             </div>
                         ))}

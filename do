@@ -99,9 +99,9 @@ when adding a task add it to the top, not to the bottom and have it right away i
 
 add placeholder Description to description input and placeholder Tags to tags input
 
-all till here done
-
 Add a bin icon button for deleting a list next to the edit list icon button on its right and add the functionality to delete a list through clicking on it
+
+all till here done
 
 Add a delete all tasks button for deleting all tasks in the selected list
 
