@@ -115,4 +115,4 @@ Add a delete all lists button for deleting all lists
 
 do not allow to give a list name that is longer than 15 characters
 
-the Personal and Work lists both have highlighted backgrounds that is supposed to be had only by the selected list no matter what is selected, fix that
+the Personal and Work lists both have highlighted backgrounds that is supposed to be had only by the selected list no matter what is selected and when I delete one, I delete both and when I edit name of one, I edit name of both, but it happens only on like every third or fith generating of template lists, fix that
