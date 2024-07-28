@@ -38,7 +38,11 @@ export function DatePickerWithPresets({
                     )}
                 >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, 'PPP') : <span>Pick a date</span>}
+                    {date instanceof Date && !isNaN(date.getTime()) ? (
+                        format(date, 'PPP')
+                    ) : (
+                        <span>Pick a date</span>
+                    )}
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="flex w-auto flex-col space-y-2 p-2">
@@ -60,7 +64,7 @@ export function DatePickerWithPresets({
                 <div className="rounded-md border">
                     <Calendar
                         mode="single"
-                        selected={date}
+                        selected={date ? new Date(date) : undefined}
                         onSelect={(selectedDate) => {
                             if (selectedDate) {
                                 selectedDate.setMinutes(

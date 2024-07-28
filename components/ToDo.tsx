@@ -242,17 +242,18 @@ export function ToDo() {
             const newTaskWithId: Task = {
                 ...newTask,
                 id: nanoid(),
+                dueDate: newTask.dueDate
+                    ? new Date(newTask.dueDate).toISOString().split('T')[0]
+                    : '',
             } as Task;
+            const updatedList = {
+                ...currentList,
+                tasks: [newTaskWithId, ...(currentList as List).tasks],
+            };
             axios
-                .post(
-                    `${endpointLists}/${currentList?.id}/tasks`,
-                    newTaskWithId
-                )
+                .put(`${endpointLists}/${currentList?.id}`, updatedList)
                 .then((response) => {
-                    setCurrentList((prevList) => ({
-                        ...(prevList as List),
-                        tasks: [...(prevList as List).tasks, response.data],
-                    }));
+                    setCurrentList(updatedList);
                     setNewTask({
                         title: '',
                         description: '',
@@ -263,6 +264,10 @@ export function ToDo() {
                         progressPercentage: 0,
                         completed: false,
                     });
+                    setEditMode((prev) => ({
+                        ...prev,
+                        [newTaskWithId.id]: true,
+                    }));
                 })
                 .catch((error) => {
                     console.error('Error adding task:', error);
@@ -996,6 +1001,7 @@ export function ToDo() {
                                 <div className="mt-2 text-muted-foreground">
                                     {editMode[task.id] ? (
                                         <Input
+                                            placeholder="Description"
                                             value={
                                                 editDescription[task.id] ||
                                                 task.description
@@ -1055,6 +1061,7 @@ export function ToDo() {
                                         <TagIcon className="w-4 h-4" />
                                         {editMode[task.id] ? (
                                             <Input
+                                                placeholder="Tags"
                                                 value={
                                                     editTags[task.id]?.join(
                                                         ', '
