@@ -693,7 +693,7 @@ export function ToDo() {
                         <h2 className="text-lg font-bold flex-1 mr-2">
                             To-Do Lists
                         </h2>
-                        {innerWidth >= 440 && (
+                        {window.innerWidth >= 440 && (
                             <>
                                 <Button
                                     size="sm"
@@ -711,7 +711,7 @@ export function ToDo() {
                         )}
                     </div>
                     <div className="flex items-center justify-between mb-4">
-                        {innerWidth < 440 && (
+                        {window.innerWidth < 440 && (
                             <>
                                 <Button
                                     size="sm"
@@ -895,7 +895,7 @@ export function ToDo() {
                 </div>
             )}
             <div
-                className={`flex-1 ${innerWidth >= 350 ? 'p-6' : 'py-6 px-1'} order-last lg:order-none`}
+                className={`flex-1 ${window.innerWidth >= 350 ? 'p-6' : 'py-6 px-1'} order-last lg:order-none`}
             >
                 <div className="flex items-center justify-between mb-4 px-2">
                     <h1 className="text-xl sm:text-2xl font-bold pr-2">
