@@ -406,7 +406,10 @@ export function ToDo() {
 
         const rect = bar.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
-        const newProgressPercentage = Math.floor((clickX / rect.width) * 100);
+        const newProgressPercentage = Math.min(
+            Math.max(Math.floor((clickX / rect.width) * 100), 0),
+            100
+        );
 
         setCurrentList((prevList) => {
             const updatedTasks = (prevList as List).tasks.map((task) => {
