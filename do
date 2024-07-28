@@ -74,9 +74,21 @@ The date picker is right now choosing the previous day when clicking on a day, f
 
 set the endpoint as env var
 
-Leave the edit mode when clicking enter when in title input, description input, tag input or datepicker
+Leave the edit mode when clicking enter when in title input, description input or tag input
+
+onKeyDown={(e) => {
+    if (e.key === 'Enter') {
+        setEditMode((prev) => ({ ...prev, [task.id]: false }));    
+    }
+}}
+
+do not let the progress bar be dragged below 0% or above 100%
+
+let me see the cursor of where I am writing in the popup for inputs
 
 Let me write spaces when in the input for tags
+
+optimalize cards responsiveness for galaxy z fold 5 (344 px width)
 
 Add a bin icon button for deleting a list next to the edit list icon button on its right and add the functionality to delete a list through clicking on it
 

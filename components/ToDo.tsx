@@ -245,7 +245,7 @@ export function ToDo() {
             } as Task;
             axios
                 .post(
-                    `https://66a56fe15dc27a3c190b7aeb.mockapi.io/api/lists/${currentList?.id}/tasks`,
+                    `${endpointLists}/${currentList?.id}/tasks`,
                     newTaskWithId
                 )
                 .then((response) => {
@@ -272,10 +272,7 @@ export function ToDo() {
 
     const handleEditTaskDebounced = debounce((listId, updatedList) => {
         axios
-            .put(
-                `https://66a56fe15dc27a3c190b7aeb.mockapi.io/api/lists/${listId}`,
-                updatedList
-            )
+            .put(`${endpointLists}/${listId}`, updatedList)
             .then(() => {
                 setCurrentList(updatedList);
             })
@@ -323,10 +320,7 @@ export function ToDo() {
             const updatedList = { ...prevList, tasks: updatedTasks };
 
             axios
-                .put(
-                    `https://66a56fe15dc27a3c190b7aeb.mockapi.io/api/lists/${prevList.id}`,
-                    updatedList
-                )
+                .put(`${endpointLists}/${prevList.id}`, updatedList)
                 .then(() => {
                     setLists((prevLists) =>
                         prevLists.map((list) =>
@@ -432,10 +426,7 @@ export function ToDo() {
             const updatedList = { ...(prevList as List), tasks: updatedTasks };
 
             axios
-                .put(
-                    `https://66a56fe15dc27a3c190b7aeb.mockapi.io/api/lists/${(prevList as List).id}`,
-                    updatedList
-                )
+                .put(`${endpointLists}/${(prevList as List).id}`, updatedList)
                 .catch((error) => {
                     console.error('Error updating task progress:', error);
                 });
@@ -465,7 +456,7 @@ export function ToDo() {
             window.removeEventListener('mousemove', handleMouseMove);
             window.removeEventListener('mouseup', handleMouseUp);
         };
-    }, [isDragging, currentDraggingTaskId]);
+    }, [isDragging, currentDraggingTaskId, updateProgress]);
 
     const handleEditIconClick = (
         taskId: string,
@@ -663,6 +654,17 @@ export function ToDo() {
                                                             e.target.value
                                                         )
                                                     }
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') {
+                                                            setEditMode(
+                                                                (prev) => ({
+                                                                    ...prev,
+                                                                    [task.id]:
+                                                                        false,
+                                                                })
+                                                            );
+                                                        }
+                                                    }}
                                                     className="w-full sm:w-auto"
                                                 />
                                             </div>
@@ -829,6 +831,17 @@ export function ToDo() {
                                                             e.target.value
                                                         )
                                                     }
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') {
+                                                            setEditMode(
+                                                                (prev) => ({
+                                                                    ...prev,
+                                                                    [task.id]:
+                                                                        false,
+                                                                })
+                                                            );
+                                                        }
+                                                    }}
                                                     className="w-full sm:w-auto"
                                                 />
                                             </div>
@@ -989,6 +1002,14 @@ export function ToDo() {
                                                     e.target.value
                                                 )
                                             }
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter') {
+                                                    setEditMode((prev) => ({
+                                                        ...prev,
+                                                        [task.id]: false,
+                                                    }));
+                                                }
+                                            }}
                                             className="w-full"
                                         />
                                     ) : (
@@ -1045,6 +1066,14 @@ export function ToDo() {
                                                             )
                                                     )
                                                 }
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        setEditMode((prev) => ({
+                                                            ...prev,
+                                                            [task.id]: false,
+                                                        }));
+                                                    }
+                                                }}
                                                 className="w-full"
                                             />
                                         ) : (
