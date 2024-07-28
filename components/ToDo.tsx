@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import { nanoid } from 'nanoid';
 import { DatePickerWithPresets } from '@/components/DatePicker';
+import axios from 'axios';
+import debounce from 'lodash.debounce';
 
 interface Task {
     id: string;
@@ -39,23 +41,21 @@ const CustomSelect: React.FC<{
         <div className="relative inline-block w-full pl-3">
             <button
                 type="button"
-                className={`border border-rounded rounded p-1 w-full min-w-[${
-                    value === 'ready for testing' ? '150' : '75'
-                }px] flex justify-between items-center ${
-                    value === 'not started'
+                className={`border border-rounded rounded p-1 w-full min-w-[${value === 'ready for testing' ? '150' : '75'
+                    }px] flex justify-between items-center ${value === 'not started'
                         ? 'border-gray-300'
                         : value === 'in progress'
-                          ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
-                          : value === 'ready for testing'
-                            ? 'border-blue-300 bg-blue-300 dark:border-blue-600 dark:bg-blue-600'
-                            : value === 'high'
-                              ? 'border-destructive bg-destructive'
-                              : value === 'medium'
-                                ? 'border-primary bg-primary text-white dark:text-black'
-                                : value === 'low'
-                                  ? 'border-secondary bg-secondary'
-                                  : 'border-green-300 bg-green-300 dark:border-green-600 dark:bg-green-600'
-                }`}
+                            ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
+                            : value === 'ready for testing'
+                                ? 'border-blue-300 bg-blue-300 dark:border-blue-600 dark:bg-blue-600'
+                                : value === 'high'
+                                    ? 'border-destructive bg-destructive'
+                                    : value === 'medium'
+                                        ? 'border-primary bg-primary text-white dark:text-black'
+                                        : value === 'low'
+                                            ? 'border-secondary bg-secondary'
+                                            : 'border-green-300 bg-green-300 dark:border-green-600 dark:bg-green-600'
+                    }`}
                 onClick={() => setOpen(!open)}
             >
                 <span className="text-xs">
@@ -100,7 +100,7 @@ const CustomSelect: React.FC<{
 export function ToDo() {
     const [lists, setLists] = useState<List[]>([]);
 
-    const handleGenerateTemplateLists = () => {
+    const handleGenerateTemplateLists = async () => {
         const newLists: List[] = [
             {
                 id: 'list1',
@@ -170,9 +170,38 @@ export function ToDo() {
                 ],
             },
         ];
-        setLists(newLists);
-        setCurrentList(newLists[0]);
+        try {
+            const responses = await Promise.all(
+                newLists.map((list) =>
+                    axios.post(
+                        'https://66a56fe15dc27a3c190b7aeb.mockapi.io/api/lists',
+                        list
+                    )
+                )
+            );
+            const createdLists = responses.map((response) => response.data);
+            setLists(createdLists);
+            setCurrentList(createdLists[0]);
+        } catch (error) {
+            console.error('Error generating template lists:', error);
+        }
     };
+
+    useEffect(() => {
+        axios
+            .get('https://66a56fe15dc27a3c190b7aeb.mockapi.io/api/lists')
+            .then((response) => {
+                setLists(response.data);
+                console.log('useEffect setting lists');
+                if (response.data.length > 0) {
+                    setCurrentList(response.data[0]);
+                    console.log('useEffect setting current list');
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching lists:', error);
+            });
+    }, []);
 
     const [currentList, setCurrentList] = useState<List | null>(null);
 
@@ -199,39 +228,76 @@ export function ToDo() {
                 ...newTask,
                 id: nanoid(),
             } as Task;
-            setCurrentList((prevList) => ({
-                ...(prevList as List),
-                tasks: [...(prevList as List).tasks, newTaskWithId],
-            }));
-            setNewTask({
-                title: '',
-                description: '',
-                priority: 'low',
-                dueDate: '',
-                tags: [],
-                progress: 'not started',
-                progressPercentage: 0,
-                completed: false,
-            });
+            axios
+                .post(
+                    `https://66a56fe15dc27a3c190b7aeb.mockapi.io/api/lists/${currentList?.id}/tasks`,
+                    newTaskWithId
+                )
+                .then((response) => {
+                    setCurrentList((prevList) => ({
+                        ...(prevList as List),
+                        tasks: [...(prevList as List).tasks, response.data],
+                    }));
+                    setNewTask({
+                        title: '',
+                        description: '',
+                        priority: 'low',
+                        dueDate: '',
+                        tags: [],
+                        progress: 'not started',
+                        progressPercentage: 0,
+                        completed: false,
+                    });
+                })
+                .catch((error) => {
+                    console.error('Error adding task:', error);
+                });
         }
     };
 
+    const handleEditTaskDebounced = debounce((listId, updatedList) => {
+        axios
+            .put(
+                `https://66a56fe15dc27a3c190b7aeb.mockapi.io/api/lists/${listId}`,
+                updatedList
+            )
+            .then(() => {
+                setCurrentList(updatedList);
+            })
+            .catch((error) => {
+                console.error('Error updating task:', error);
+            });
+    }, 300);
+
     const handleEditTask = (taskId: string, updatedTask: Partial<Task>) => {
-        setCurrentList((prevList) => ({
-            ...(prevList as List),
-            tasks: (prevList as List).tasks.map((task) =>
+        setCurrentList((prevList) => {
+            const updatedTasks = (prevList as List).tasks.map((task) =>
                 task.id === taskId ? { ...task, ...updatedTask } : task
-            ),
-        }));
+            );
+            const updatedList = { ...(prevList as List), tasks: updatedTasks };
+
+            handleEditTaskDebounced((prevList as List).id, updatedList);
+
+            return updatedList;
+        });
     };
 
     const handleDeleteTask = (taskId: string) => {
-        setCurrentList((prevList) => ({
-            ...(prevList as List),
-            tasks: (prevList as List).tasks.filter(
-                (task) => task.id !== taskId
-            ),
-        }));
+        axios
+            .delete(
+                `https://66a56fe15dc27a3c190b7aeb.mockapi.io/api/lists/${currentList?.id}/tasks/${taskId}`
+            )
+            .then(() => {
+                setCurrentList((prevList) => ({
+                    ...(prevList as List),
+                    tasks: (prevList as List).tasks.filter(
+                        (task) => task.id !== taskId
+                    ),
+                }));
+            })
+            .catch((error) => {
+                console.error('Error deleting task:', error);
+            });
     };
 
     const handleToggleTaskCompletion = (taskId: string) => {
@@ -305,26 +371,40 @@ export function ToDo() {
         }));
     };
 
-    const handleEditIconClick = (taskId: string) => {
+    const [editTitle, setEditTitle] = useState<{ [key: string]: string }>({});
+
+    const handleEditIconClick = (taskId: string, title: string) => {
+        setEditTitle((prev) => ({ ...prev, [taskId]: title }));
         setEditMode((prev) => ({ ...prev, [taskId]: !prev[taskId] }));
     };
 
+    const handleTitleChange = (taskId: string, newTitle: string) => {
+        setEditTitle((prev) => ({ ...prev, [taskId]: newTitle }));
+        handleEditTask(taskId, { title: newTitle });
+    };
+
     const handleAddList = () => {
-        const newListId = nanoid();
-        setLists([
-            ...lists,
-            {
-                id: newListId,
-                name: 'New List',
-                tasks: [],
-            },
-        ]);
-        setListEditMode((prev) => ({ ...prev, [newListId]: true }));
-        setCurrentList({
-            id: newListId,
+        const newList = {
+            id: nanoid(),
             name: 'New List',
             tasks: [],
-        });
+        };
+        axios
+            .post(
+                'https://66a56fe15dc27a3c190b7aeb.mockapi.io/api/lists',
+                newList
+            )
+            .then((response) => {
+                setLists([...lists, response.data]);
+                setCurrentList(response.data);
+                setListEditMode((prev) => ({
+                    ...prev,
+                    [response.data.id]: true,
+                }));
+            })
+            .catch((error) => {
+                console.error('Error adding list:', error);
+            });
     };
 
     return (
@@ -356,10 +436,10 @@ export function ToDo() {
                                                 prevLists.map((prevList) =>
                                                     prevList.id === list.id
                                                         ? {
-                                                              ...prevList,
-                                                              name: e.target
-                                                                  .value,
-                                                          }
+                                                            ...prevList,
+                                                            name: e.target
+                                                                .value,
+                                                        }
                                                         : prevList
                                                 )
                                             )
@@ -462,14 +542,14 @@ export function ToDo() {
                                         {editMode[task.id] ? (
                                             <div className="relative">
                                                 <Input
-                                                    value={task.title}
+                                                    value={
+                                                        editTitle[task.id] ||
+                                                        task.title
+                                                    }
                                                     onChange={(e) =>
-                                                        handleEditTask(
+                                                        handleTitleChange(
                                                             task.id,
-                                                            {
-                                                                title: e.target
-                                                                    .value,
-                                                            }
+                                                            e.target.value
                                                         )
                                                     }
                                                     className="w-full sm:w-auto"
@@ -518,8 +598,8 @@ export function ToDo() {
                                                         ? 'destructive'
                                                         : task.priority ===
                                                             'medium'
-                                                          ? 'default'
-                                                          : 'secondary'
+                                                            ? 'default'
+                                                            : 'secondary'
                                                 }
                                             >
                                                 {task.priority}
@@ -559,18 +639,17 @@ export function ToDo() {
                                             />
                                         ) : (
                                             <span
-                                                className={`text-xs rounded p-1 dark:font-semibold ${
-                                                    task.progress ===
+                                                className={`text-xs rounded p-1 dark:font-semibold ${task.progress ===
                                                     'not started'
-                                                        ? 'border-gray-300'
+                                                    ? 'border-gray-300'
+                                                    : task.progress ===
+                                                        'in progress'
+                                                        ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
                                                         : task.progress ===
-                                                            'in progress'
-                                                          ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
-                                                          : task.progress ===
-                                                              'ready for testing'
+                                                            'ready for testing'
                                                             ? 'border-blue-300 bg-blue-300 dark:border-blue-600 dark:bg-blue-600'
                                                             : 'border-green-300 bg-green-300 dark:border-green-600 dark:bg-green-600'
-                                                }`}
+                                                    }`}
                                             >
                                                 {task.progress}
                                             </span>
@@ -578,19 +657,11 @@ export function ToDo() {
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            className={
-                                                editMode[task.id]
-                                                    ? 'bg-gray-200 dark:bg-gray-900 p-2'
-                                                    : ''
-                                            }
-                                            onClick={() =>
-                                                handleEditIconClick(task.id)
-                                            }
+                                            className={editMode[task.id] ? 'bg-gray-200 dark:bg-gray-900 p-2' : ''}
+                                            onClick={() => handleEditIconClick(task.id, task.title)}
                                         >
                                             <FilePenIcon className="w-4 h-4" />
-                                            <span className="sr-only">
-                                                Edit task
-                                            </span>
+                                            <span className="sr-only">Edit task</span>
                                         </Button>
                                         <Button
                                             variant="ghost"
@@ -619,18 +690,17 @@ export function ToDo() {
                                             }
                                             disabled={!editMode[task.id]}
                                         />
-
                                         {editMode[task.id] ? (
                                             <div className="relative">
                                                 <Input
-                                                    value={task.title}
+                                                    value={
+                                                        editTitle[task.id] ||
+                                                        task.title
+                                                    }
                                                     onChange={(e) =>
-                                                        handleEditTask(
+                                                        handleTitleChange(
                                                             task.id,
-                                                            {
-                                                                title: e.target
-                                                                    .value,
-                                                            }
+                                                            e.target.value
                                                         )
                                                     }
                                                     className="w-full sm:w-auto"
@@ -652,7 +722,10 @@ export function ToDo() {
                                                     : ''
                                             }
                                             onClick={() =>
-                                                handleEditIconClick(task.id)
+                                                handleEditIconClick(
+                                                    task.id,
+                                                    task.title
+                                                )
                                             }
                                         >
                                             <FilePenIcon className="w-4 h-4" />
@@ -711,8 +784,8 @@ export function ToDo() {
                                                         ? 'destructive'
                                                         : task.priority ===
                                                             'medium'
-                                                          ? 'default'
-                                                          : 'secondary'
+                                                            ? 'default'
+                                                            : 'secondary'
                                                 }
                                             >
                                                 {task.priority}
@@ -756,18 +829,17 @@ export function ToDo() {
                                             />
                                         ) : (
                                             <span
-                                                className={`text-xs rounded p-1 dark:font-semibold ${
-                                                    task.progress ===
+                                                className={`text-xs rounded p-1 dark:font-semibold ${task.progress ===
                                                     'not started'
-                                                        ? 'border-gray-300'
+                                                    ? 'border-gray-300'
+                                                    : task.progress ===
+                                                        'in progress'
+                                                        ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
                                                         : task.progress ===
-                                                            'in progress'
-                                                          ? 'border-orange-300 bg-orange-300 dark:border-yellow-300 dark:bg-yellow-300 dark:text-black'
-                                                          : task.progress ===
-                                                              'ready for testing'
+                                                            'ready for testing'
                                                             ? 'border-blue-300 bg-blue-300 dark:border-blue-600 dark:bg-blue-600'
                                                             : 'border-green-300 bg-green-300 dark:border-green-600 dark:bg-green-600'
-                                                }`}
+                                                    }`}
                                             >
                                                 {task.progress}
                                             </span>
@@ -810,11 +882,11 @@ export function ToDo() {
                                                     Due:{' '}
                                                     {task.dueDate
                                                         ? format(
-                                                              new Date(
-                                                                  task.dueDate
-                                                              ),
-                                                              'MMM d, yyyy'
-                                                          )
+                                                            new Date(
+                                                                task.dueDate
+                                                            ),
+                                                            'MMM d, yyyy'
+                                                        )
                                                         : 'No due date'}
                                                 </span>
                                             </div>
@@ -854,34 +926,32 @@ export function ToDo() {
                                     <div className="flex items-center gap-2 mt-2">
                                         <ActivityIcon className="w-4 h-4" />
                                         <div
-                                            className={`w-full bg-muted rounded-full h-2 ${
-                                                editMode[task.id] &&
+                                            className={`w-full bg-muted rounded-full h-2 ${editMode[task.id] &&
                                                 task.progress !==
-                                                    'not started' &&
+                                                'not started' &&
                                                 task.progress !== 'finished'
-                                                    ? 'cursor-pointer'
-                                                    : ''
-                                            }`}
+                                                ? 'cursor-pointer'
+                                                : ''
+                                                }`}
                                             onClick={(e) =>
                                                 editMode[task.id] &&
-                                                task.progress !==
+                                                    task.progress !==
                                                     'not started' &&
-                                                task.progress !== 'finished'
+                                                    task.progress !== 'finished'
                                                     ? handleProgressBarClick(
-                                                          task.id,
-                                                          e
-                                                      )
+                                                        task.id,
+                                                        e
+                                                    )
                                                     : null
                                             }
                                         >
                                             <div
-                                                className={`bg-primary rounded-full h-2 ${
-                                                    task.progress ===
-                                                        'not started' ||
+                                                className={`bg-primary rounded-full h-2 ${task.progress ===
+                                                    'not started' ||
                                                     task.progress === 'finished'
-                                                        ? 'pointer-events-none'
-                                                        : 'pointer-events-auto'
-                                                }`}
+                                                    ? 'pointer-events-none'
+                                                    : 'pointer-events-auto'
+                                                    }`}
                                                 style={{
                                                     width: `${task.progressPercentage}%`,
                                                 }}

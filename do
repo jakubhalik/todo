@@ -53,3 +53,9 @@ when in the list edit mode I need the button with the edit icon to be more gray 
 use the component DatePicker for a datepicker for the due date to be also editable when in the edit state
 
 build -> if type errs -> fix type errs -> back to BOL until type errs fixed
+
+I need the generating of template lists to also post those to the mockapi
+
+Even tho a put request is being sent on every little change on the title input do not let that affect the smoothness of the ux of writting in that input, what is now happening is that when I text in there quickly the letters are slow and sometimes the new ones I write do not appear because the old ones do
+
+But now me texting in there does not send the put requests anymore and when I switch from the edit mode I am back to the text that was there before. I want the state of what title text I am changing there to be instantly affecting sending put requests but for the data from the endpoints to not be whatsoever effecting the states of my fields when in edit mode.
