@@ -174,7 +174,12 @@ export function ToDo() {
 
     const [isDeletingAllLists, setIsDeletingAllLists] = useState(false);
 
+    const [isGeneratingTemplates, setIsGeneratingTemplates] = useState(false);
+
+    const [isLoading, setIsLoading] = useState(true);
+
     const handleGenerateTemplateLists = async () => {
+        setIsGeneratingTemplates(true);
         const personalList = {
             id: nanoid(),
             name: 'Personal',
@@ -276,6 +281,8 @@ export function ToDo() {
             }
         } catch (error) {
             console.error('Error generating template lists:', error);
+        } finally {
+            setIsGeneratingTemplates(false);
         }
     };
 
@@ -292,6 +299,9 @@ export function ToDo() {
             })
             .catch((error) => {
                 console.error('Error fetching lists:', error);
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     }, [endpointLists]);
 
@@ -699,9 +709,34 @@ export function ToDo() {
                         </Button>
                     </div>
                     {lists.length === 0 ? (
-                        <Button onClick={handleGenerateTemplateLists}>
-                            Generate Template Lists
-                        </Button>
+                        isLoading || isGeneratingTemplates ? (
+                            <div className="flex justify-center mt-4">
+                                <svg
+                                    className="animate-spin h-8 w-8 text-blue-500"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <circle
+                                        className="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                    ></circle>
+                                    <path
+                                        className="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291l-2.293 2.293a1 1 0 001.414 1.414L8 18.414A8.001 8.001 0 016 17.291z"
+                                    ></path>
+                                </svg>
+                            </div>
+                        ) : (
+                            <Button onClick={handleGenerateTemplateLists}>
+                                Generate Template Lists
+                            </Button>
+                        )
                     ) : (
                         <div className="space-y-2">
                             {lists.map((list) => (

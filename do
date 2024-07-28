@@ -141,7 +141,11 @@ the lists are sometimes behaving like they are the same list even tho I am doing
 
 after starting handleDeleteAllLists open an AlertDialog with a loading bar until it is done
 
-all till here done
-
 when generating templates display scrolling bar until it is all generated and posted
+
+make it a circle
+
+Also put that circle there at the initial load until it was checked if there are any data on the endpoint
+
+all till here done
 
